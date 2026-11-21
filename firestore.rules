@@ -1,0 +1,902 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Pillar 4.1: Global default-deny safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Read-only connectivity probe doc (zero app PII)
+    match /test/{docId} {
+      allow get: if docId == 'connection';
+      allow list, create, update, delete: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // Phase 3: Global Security Primitives
+    // -------------------------------------------------------------------------
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(uid) {
+      return isVerifiedUser() && request.auth.uid == uid;
+    }
+
+    function isSchoolId(val) {
+      return val is string && val == 'sdn-jetiskarangpung-1';
+    }
+
+    function isValidString(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    function isBoundedStringList(lst, maxLen) {
+      return lst is list && lst.size() <= maxLen && (lst.size() == 0 || lst[0] is string);
+    }
+
+    function isBootstrappedSuperAdminEmail() {
+      return isVerifiedUser() && request.auth.token.email == 'dwiariwibowo313@gmail.com';
+    }
+
+    function isSuperAdmin() {
+      return isBootstrappedSuperAdminEmail()
+        && exists(/databases/$(database)/documents/system_bootstrap/super_admin)
+        && get(/databases/$(database)/documents/system_bootstrap/super_admin).data.super_admin_uid == request.auth.uid;
+    }
+
+    function isSchoolAdmin() {
+      return isVerifiedUser()
+        && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.role in ['super_admin', 'school_admin'];
+    }
+
+    function isAdmin() {
+      return isSuperAdmin() || isSchoolAdmin();
+    }
+
+    function isActiveTeacher() {
+      return isVerifiedUser()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher'
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.is_active == true;
+    }
+
+    // -------------------------------------------------------------------------
+    // Phase 2/4: Entity Validation Blueprints (Anti-Update-Gap)
+    // -------------------------------------------------------------------------
+    function isValidSystemBootstrap(data) {
+      return data.keys().hasAll(['super_admin_uid', 'email', 'school_id', 'bootstrapped_at'])
+        && data.keys().hasOnly(['super_admin_uid', 'email', 'school_id', 'bootstrapped_at'])
+        && isValidId(data.super_admin_uid)
+        && data.email is string && data.email == 'dwiariwibowo313@gmail.com'
+        && isSchoolId(data.school_id)
+        && data.bootstrapped_at is timestamp;
+    }
+
+    function isValidAdminMarker(data) {
+      return data.keys().hasAll(['uid', 'role', 'school_id', 'created_at'])
+        && data.keys().hasOnly(['uid', 'role', 'school_id', 'created_at'])
+        && isValidId(data.uid)
+        && data.role in ['super_admin', 'school_admin']
+        && isSchoolId(data.school_id)
+        && data.created_at is timestamp;
+    }
+
+    function isValidUserAccount(data) {
+      return data.keys().hasAll([
+          'uid', 'email', 'display_name', 'role', 'school_id',
+          'is_active', 'linked_entity_id', 'email_verified', 'created_at', 'updated_at'
+        ])
+        && data.keys().hasOnly([
+          'uid', 'email', 'display_name', 'role', 'school_id',
+          'is_active', 'linked_entity_id', 'email_verified', 'created_at', 'updated_at'
+        ])
+        && isValidId(data.uid)
+        && isValidString(data.email, 5, 160)
+        && isValidString(data.display_name, 1, 120)
+        && data.role in ['super_admin', 'school_admin', 'teacher', 'student', 'guardian']
+        && isSchoolId(data.school_id)
+        && data.is_active is bool
+        && isValidString(data.linked_entity_id, 0, 128)
+        && data.email_verified is bool
+        && data.created_at is timestamp
+        && data.updated_at is timestamp;
+    }
+
+    function isValidSchoolSettings(data) {
+      return data.keys().hasAll([
+          'id', 'school_id', 'school_name', 'slogan', 'app_version',
+          'auto_sync_enabled', 'sync_interval_minutes', 'updated_by', 'updated_at'
+        ])
+        && data.keys().hasOnly([
+          'id', 'school_id', 'school_name', 'slogan', 'logo_data_url', 'app_version',
+          'auto_sync_enabled', 'sync_interval_minutes', 'updated_by', 'updated_at'
+        ])
+        && isSchoolId(data.id)
+        && isSchoolId(data.school_id)
+        && isValidString(data.school_name, 3, 120)
+        && isValidString(data.slogan, 3, 200)
+        && (!('logo_data_url' in data) || (data.logo_data_url is string && data.logo_data_url.size() <= 400000))
+        && isValidString(data.app_version, 1, 32)
+        && data.auto_sync_enabled is bool
+        && data.sync_interval_minutes is number && data.sync_interval_minutes >= 1 && data.sync_interval_minutes <= 120
+        && isValidString(data.updated_by, 1, 120)
+        && data.updated_at is timestamp;
+    }
+
+    function isValidClassRoom(data) {
+      return data.keys().hasAll(['id', 'school_id', 'name', 'grade_level', 'academic_year'])
+        && data.keys().hasOnly(['id', 'school_id', 'name', 'grade_level', 'academic_year', 'homeroom_teacher_id'])
+        && isValidId(data.id)
+        && isSchoolId(data.school_id)
+        && isValidString(data.name, 1, 80)
+        && data.grade_level is number && data.grade_level >= 1 && data.grade_level <= 6
+        && isValidString(data.academic_year, 4, 20)
+        && (!('homeroom_teacher_id' in data) || isValidString(data.homeroom_teacher_id, 0, 128));
+    }
+
+    function isValidHalaqah(data) {
+      return data.keys().hasAll(['id', 'school_id', 'name', 'teacher_id', 'class_ids', 'schedule_note'])
+        && data.keys().hasOnly(['id', 'school_id', 'name', 'teacher_id', 'class_ids', 'schedule_note'])
+        && isValidId(data.id)
+        && isSchoolId(data.school_id)
+        && isValidString(data.name, 1, 100)
+        && isValidString(data.teacher_id, 1, 128)
+        && isBoundedStringList(data.class_ids, 20)
+        && isValidString(data.schedule_note, 0, 200);
+    }
+
+    function isValidStudent(data) {
+      return data.keys().hasAll([
+          'id', 'school_id', 'nis_local', 'full_name', 'class_id', 'halaqah_id',
+          'guardian_ids', 'guardian_uids', 'assigned_teacher_uids', 'admin_uids', 'status'
+        ])
+        && data.keys().hasOnly([
+          'id', 'school_id', 'nis_local', 'full_name', 'class_id', 'halaqah_id',
+          'guardian_ids', 'guardian_uids', 'assigned_teacher_uids', 'admin_uids', 'student_uid', 'status'
+        ])
+        && isValidId(data.id)
+        && isSchoolId(data.school_id)
+        && isValidString(data.nis_local, 2, 32)
+        && isValidString(data.full_name, 2, 120)
+        && isValidId(data.class_id)
+        && isValidId(data.halaqah_id)
+        && isBoundedStringList(data.guardian_ids, 4)
+        && isBoundedStringList(data.guardian_uids, 4)
+        && isBoundedStringList(data.assigned_teacher_uids, 10)
+        && isBoundedStringList(data.admin_uids, 10)
+        && (!('student_uid' in data) || isValidString(data.student_uid, 0, 128))
+        && data.status in ['aktif', 'lulus', 'pindah'];
+    }
+
+    function isValidGuardian(data) {
+      return data.keys().hasAll([
+          'id', 'school_id', 'full_name', 'relationship', 'whatsapp_raw', 'whatsapp_e164',
+          'verification_status', 'communication_consent', 'student_ids',
+          'assigned_teacher_uids', 'admin_uids', 'updated_at'
+        ])
+        && data.keys().hasOnly([
+          'id', 'school_id', 'full_name', 'relationship', 'whatsapp_raw', 'whatsapp_e164',
+          'verification_status', 'communication_consent', 'consent_updated_at',
+          'student_ids', 'assigned_teacher_uids', 'admin_uids', 'guardian_uid', 'updated_at'
+        ])
+        && isValidId(data.id)
+        && isSchoolId(data.school_id)
+        && isValidString(data.full_name, 2, 120)
+        && data.relationship in ['Ayah', 'Ibu', 'Wali']
+        && isValidString(data.whatsapp_raw, 0, 32)
+        && isValidString(data.whatsapp_e164, 0, 24)
+        && data.verification_status in ['belum_diverifikasi', 'terverifikasi']
+        && data.communication_consent is bool
+        && (!('consent_updated_at' in data) || isValidString(data.consent_updated_at, 0, 64))
+        && isBoundedStringList(data.student_ids, 10)
+        && isBoundedStringList(data.assigned_teacher_uids, 10)
+        && isBoundedStringList(data.admin_uids, 10)
+        && (!('guardian_uid' in data) || isValidString(data.guardian_uid, 0, 128))
+        && data.updated_at is timestamp;
+    }
+
+    function isValidTeacherAssignment(data) {
+      return data.keys().hasAll([
+          'id', 'school_id', 'teacher_uid', 'teacher_name', 'class_ids',
+          'halaqah_ids', 'student_ids', 'admin_uids', 'can_announce', 'can_manage_guardian_contacts'
+        ])
+        && data.keys().hasOnly([
+          'id', 'school_id', 'teacher_uid', 'teacher_name', 'class_ids',
+          'halaqah_ids', 'student_ids', 'admin_uids', 'can_announce', 'can_manage_guardian_contacts'
+        ])
+        && isValidId(data.id)
+        && isSchoolId(data.school_id)
+        && isValidId(data.teacher_uid)
+        && isValidString(data.teacher_name, 2, 120)
+        && isBoundedStringList(data.class_ids, 20)
+        && isBoundedStringList(data.halaqah_ids, 20)
+        && isBoundedStringList(data.student_ids, 50)
+        && isBoundedStringList(data.admin_uids, 10)
+        && data.can_announce is bool
+        && data.can_manage_guardian_contacts is bool;
+    }
+
+    function isValidTahfidzTarget(data) {
+      return data.keys().hasAll([
+          'id', 'school_id', 'scope', 'target_ref_id', 'period_label',
+          'start_date', 'end_date', 'surah_number', 'ayah_start', 'ayah_end', 'target_ayah_count'
+        ])
+        && data.keys().hasOnly([
+          'id', 'school_id', 'scope', 'target_ref_id', 'period_label',
+          'start_date', 'end_date', 'surah_number', 'ayah_start', 'ayah_end', 'target_ayah_count'
+        ])
+        && isValidId(data.id)
+        && isSchoolId(data.school_id)
+        && data.scope in ['student', 'class', 'halaqah']
+        && isValidString(data.target_ref_id, 1, 128)
+        && isValidString(data.period_label, 2, 120)
+        && isValidString(data.start_date, 4, 32)
+        && isValidString(data.end_date, 4, 32)
+        && data.surah_number is number && data.surah_number >= 1 && data.surah_number <= 114
+        && data.ayah_start is number && data.ayah_start >= 1
+        && data.ayah_end is number && data.ayah_end >= data.ayah_start
+        && data.target_ayah_count is number && data.target_ayah_count >= 1 && data.target_ayah_count <= 6236;
+    }
+
+    function isValidMemorizationRecord(data) {
+      return data.keys().hasAll([
+          'id', 'school_id', 'student_id', 'guardian_uids', 'admin_uids',
+          'teacher_uid', 'teacher_name', 'class_id', 'halaqah_id', 'date',
+          'surah_number', 'surah_name', 'ayah_start', 'ayah_end', 'unique_ayah_keys',
+          'status', 'whatsapp_share_status', 'created_at', 'updated_at'
+        ])
+        && data.keys().hasOnly([
+          'id', 'school_id', 'student_id', 'student_uid', 'guardian_uids', 'admin_uids',
+          'teacher_uid', 'teacher_name', 'class_id', 'halaqah_id', 'date',
+          'surah_number', 'surah_name', 'ayah_start', 'ayah_end', 'unique_ayah_keys',
+          'kelancaran', 'ketepatan_bacaan', 'tajwid', 'makhraj', 'status',
+          'teacher_note', 'whatsapp_share_status', 'whatsapp_shared_at', 'created_at', 'updated_at'
+        ])
+        && isValidId(data.id)
+        && isSchoolId(data.school_id)
+        && isValidId(data.student_id)
+        && (!('student_uid' in data) || isValidString(data.student_uid, 0, 128))
+        && isBoundedStringList(data.guardian_uids, 4)
+        && isBoundedStringList(data.admin_uids, 10)
+        && isValidId(data.teacher_uid)
+        && isValidString(data.teacher_name, 2, 120)
+        && isValidString(data.class_id, 1, 128)
+        && isValidString(data.halaqah_id, 1, 128)
+        && isValidString(data.date, 8, 32)
+        && data.surah_number is number && data.surah_number >= 1 && data.surah_number <= 114
+        && isValidString(data.surah_name, 1, 64)
+        && data.ayah_start is number && data.ayah_start >= 1
+        && data.ayah_end is number && data.ayah_end >= data.ayah_start
+        && isBoundedStringList(data.unique_ayah_keys, 286)
+        && (!('kelancaran' in data) || isValidString(data.kelancaran, 1, 48))
+        && (!('ketepatan_bacaan' in data) || isValidString(data.ketepatan_bacaan, 1, 48))
+        && (!('tajwid' in data) || isValidString(data.tajwid, 1, 48))
+        && (!('makhraj' in data) || isValidString(data.makhraj, 1, 48))
+        && data.status in ['menunggu_penilaian', 'perlu_perbaikan', 'lulus']
+        && (!('teacher_note' in data) || isValidString(data.teacher_note, 0, 500))
+        && data.whatsapp_share_status in ['belum_dibagikan', 'whatsapp_dibuka', 'dikonfirmasi_terkirim']
+        && (!('whatsapp_shared_at' in data) || isValidString(data.whatsapp_shared_at, 0, 64))
+        && data.created_at is timestamp
+        && data.updated_at is timestamp;
+    }
+
+    function isValidMurajaahRecord(data) {
+      return data.keys().hasAll([
+          'id', 'school_id', 'student_id', 'guardian_uids', 'admin_uids',
+          'teacher_uid', 'teacher_name', 'class_id', 'halaqah_id', 'date',
+          'surah_number', 'surah_name', 'ayah_start', 'ayah_end',
+          'status', 'whatsapp_share_status', 'created_at', 'updated_at'
+        ])
+        && data.keys().hasOnly([
+          'id', 'school_id', 'student_id', 'student_uid', 'guardian_uids', 'admin_uids',
+          'teacher_uid', 'teacher_name', 'class_id', 'halaqah_id', 'date',
+          'surah_number', 'surah_name', 'ayah_start', 'ayah_end',
+          'kelancaran', 'ketepatan_bacaan', 'tajwid', 'makhraj', 'status',
+          'teacher_note', 'whatsapp_share_status', 'whatsapp_shared_at', 'created_at', 'updated_at'
+        ])
+        && isValidId(data.id)
+        && isSchoolId(data.school_id)
+        && isValidId(data.student_id)
+        && (!('student_uid' in data) || isValidString(data.student_uid, 0, 128))
+        && isBoundedStringList(data.guardian_uids, 4)
+        && isBoundedStringList(data.admin_uids, 10)
+        && isValidId(data.teacher_uid)
+        && isValidString(data.teacher_name, 2, 120)
+        && isValidString(data.class_id, 1, 128)
+        && isValidString(data.halaqah_id, 1, 128)
+        && isValidString(data.date, 8, 32)
+        && data.surah_number is number && data.surah_number >= 1 && data.surah_number <= 114
+        && isValidString(data.surah_name, 1, 64)
+        && data.ayah_start is number && data.ayah_start >= 1
+        && data.ayah_end is number && data.ayah_end >= data.ayah_start
+        && (!('kelancaran' in data) || isValidString(data.kelancaran, 1, 48))
+        && (!('ketepatan_bacaan' in data) || isValidString(data.ketepatan_bacaan, 1, 48))
+        && (!('tajwid' in data) || isValidString(data.tajwid, 1, 48))
+        && (!('makhraj' in data) || isValidString(data.makhraj, 1, 48))
+        && data.status in ['menunggu_penilaian', 'perlu_perbaikan', 'lulus']
+        && (!('teacher_note' in data) || isValidString(data.teacher_note, 0, 500))
+        && data.whatsapp_share_status in ['belum_dibagikan', 'whatsapp_dibuka', 'dikonfirmasi_terkirim']
+        && (!('whatsapp_shared_at' in data) || isValidString(data.whatsapp_shared_at, 0, 64))
+        && data.created_at is timestamp
+        && data.updated_at is timestamp;
+    }
+
+    function isValidAnnouncement(data) {
+      return data.keys().hasAll([
+          'id', 'school_id', 'title', 'body', 'category', 'priority', 'target_audience',
+          'author_uid', 'author_name', 'start_at', 'end_at', 'is_published', 'is_archived',
+          'created_at', 'updated_at'
+        ])
+        && data.keys().hasOnly([
+          'id', 'school_id', 'title', 'body', 'category', 'priority', 'target_audience',
+          'target_ref_id', 'author_uid', 'author_name', 'start_at', 'end_at',
+          'is_published', 'is_archived', 'created_at', 'updated_at'
+        ])
+        && isValidId(data.id)
+        && isSchoolId(data.school_id)
+        && isValidString(data.title, 3, 160)
+        && isValidString(data.body, 3, 1500)
+        && isValidString(data.category, 2, 64)
+        && data.priority in ['Normal', 'Penting', 'Mendesak']
+        && data.target_audience in ['all', 'teacher', 'student', 'guardian', 'class', 'halaqah']
+        && (!('target_ref_id' in data) || isValidString(data.target_ref_id, 0, 128))
+        && isValidId(data.author_uid)
+        && isValidString(data.author_name, 2, 120)
+        && isValidString(data.start_at, 4, 64)
+        && isValidString(data.end_at, 4, 64)
+        && data.is_published is bool
+        && data.is_archived is bool
+        && data.created_at is timestamp
+        && data.updated_at is timestamp;
+    }
+
+    function isValidAnnouncementRead(data) {
+      return data.keys().hasAll(['id', 'announcement_id', 'user_uid', 'read_at'])
+        && data.keys().hasOnly(['id', 'announcement_id', 'user_uid', 'read_at'])
+        && isValidId(data.id)
+        && isValidId(data.announcement_id)
+        && isValidId(data.user_uid)
+        && data.read_at is timestamp;
+    }
+
+    function isValidQuizResult(data) {
+      return data.keys().hasAll([
+          'id', 'school_id', 'student_id', 'owner_uid', 'admin_uids', 'module',
+          'package_title', 'total_questions', 'correct_count', 'accuracy_percent',
+          'duration_seconds', 'weak_topics', 'weak_surahs', 'completed_at'
+        ])
+        && data.keys().hasOnly([
+          'id', 'school_id', 'student_id', 'owner_uid', 'admin_uids', 'module',
+          'package_title', 'total_questions', 'correct_count', 'accuracy_percent',
+          'duration_seconds', 'weak_topics', 'weak_surahs', 'completed_at'
+        ])
+        && isValidId(data.id)
+        && isSchoolId(data.school_id)
+        && isValidId(data.student_id)
+        && isValidId(data.owner_uid)
+        && isBoundedStringList(data.admin_uids, 10)
+        && data.module in ['tajwid', 'mapsi']
+        && isValidString(data.package_title, 2, 160)
+        && data.total_questions is number && data.total_questions >= 1 && data.total_questions <= 100
+        && data.correct_count is number && data.correct_count >= 0 && data.correct_count <= data.total_questions
+        && data.accuracy_percent is number && data.accuracy_percent >= 0 && data.accuracy_percent <= 100
+        && data.duration_seconds is number && data.duration_seconds >= 0 && data.duration_seconds <= 86400
+        && isBoundedStringList(data.weak_topics, 20)
+        && isBoundedStringList(data.weak_surahs, 37)
+        && data.completed_at is timestamp;
+    }
+
+    function isValidAuditLog(data) {
+      return data.keys().hasAll([
+          'id', 'school_id', 'actor_uid', 'actor_name', 'actor_role',
+          'action', 'target', 'summary', 'timestamp'
+        ])
+        && data.keys().hasOnly([
+          'id', 'school_id', 'actor_uid', 'actor_name', 'actor_role',
+          'action', 'target', 'summary', 'timestamp'
+        ])
+        && isValidId(data.id)
+        && isSchoolId(data.school_id)
+        && isValidId(data.actor_uid)
+        && isValidString(data.actor_name, 2, 120)
+        && data.actor_role in ['super_admin', 'school_admin', 'teacher', 'student', 'guardian']
+        && isValidString(data.action, 2, 80)
+        && isValidString(data.target, 1, 160)
+        && isValidString(data.summary, 2, 400)
+        && data.timestamp is timestamp;
+    }
+
+    // -------------------------------------------------------------------------
+    // Collection Match Blocks (Zero Blanket Reads, Strict RBAC & Validation)
+    // -------------------------------------------------------------------------
+
+    // 1. Atomic One-Time Super Admin Bootstrap
+    match /system_bootstrap/{docId} {
+      allow get: if isValidId(docId) && docId == 'super_admin' && isVerifiedUser();
+      allow list: if false;
+      allow create: if docId == 'super_admin'
+        && isBootstrappedSuperAdminEmail()
+        && !exists(/databases/$(database)/documents/system_bootstrap/super_admin)
+        && isValidSystemBootstrap(incoming())
+        && incoming().super_admin_uid == request.auth.uid
+        && incoming().bootstrapped_at == request.time
+        && existsAfter(/databases/$(database)/documents/admins/$(request.auth.uid))
+        && existsAfter(/databases/$(database)/documents/users/$(request.auth.uid));
+      allow update, delete: if false;
+    }
+
+    // 2. Trusted Admin Markers
+    match /admins/{uid} {
+      allow get: if isValidId(uid) && (isOwner(uid) || isSuperAdmin());
+      allow list: if false;
+      allow create: if isValidId(uid)
+        && isValidAdminMarker(incoming())
+        && incoming().uid == uid
+        && incoming().created_at == request.time
+        && (
+          (isBootstrappedSuperAdminEmail() && uid == request.auth.uid && incoming().role == 'super_admin'
+            && existsAfter(/databases/$(database)/documents/system_bootstrap/super_admin))
+          || (isSuperAdmin() && incoming().role == 'school_admin')
+        );
+      allow update: if false;
+      allow delete: if isValidId(uid) && isSuperAdmin() && uid != request.auth.uid;
+    }
+
+    // 3. Users (Email PII Isolated)
+    match /users/{uid} {
+      allow get: if isValidId(uid) && (isOwner(uid) || isAdmin());
+      allow list: if isBootstrappedSuperAdminEmail()
+        || (isVerifiedUser() && resource.data.uid == request.auth.uid);
+      allow create: if isValidId(uid)
+        && isValidUserAccount(incoming())
+        && incoming().uid == uid
+        && incoming().created_at == request.time
+        && incoming().updated_at == request.time
+        && (
+          (isBootstrappedSuperAdminEmail() && uid == request.auth.uid
+            && incoming().role == 'super_admin' && incoming().is_active == true)
+          || (isOwner(uid) && incoming().role in ['student', 'guardian']
+            && incoming().is_active == false && incoming().linked_entity_id == '')
+          || (isAdmin() && incoming().role != 'super_admin')
+        );
+      allow update: if isValidId(uid)
+        && isValidUserAccount(incoming())
+        && incoming().uid == existing().uid
+        && incoming().email == existing().email
+        && incoming().school_id == existing().school_id
+        && incoming().created_at == existing().created_at
+        && incoming().updated_at == request.time
+        && (
+          (isSuperAdmin()
+            && incoming().diff(existing()).affectedKeys().hasOnly(['display_name', 'role', 'is_active', 'linked_entity_id', 'updated_at']))
+          || (isSchoolAdmin() && existing().role != 'super_admin' && incoming().role != 'super_admin'
+            && incoming().diff(existing()).affectedKeys().hasOnly(['display_name', 'role', 'is_active', 'linked_entity_id', 'updated_at']))
+          || (isOwner(uid)
+            && incoming().diff(existing()).affectedKeys().hasOnly(['display_name', 'updated_at']))
+        );
+      allow delete: if isValidId(uid) && isSuperAdmin() && uid != request.auth.uid;
+    }
+
+    // 4. School Settings (Single School Locked)
+    match /school_settings/{schoolId} {
+      allow get: if isValidId(schoolId) && isSchoolId(schoolId) && isVerifiedUser();
+      allow list: if isVerifiedUser() && resource.data.school_id == 'sdn-jetiskarangpung-1';
+      allow create: if isValidId(schoolId)
+        && isSchoolId(schoolId)
+        && isAdmin()
+        && isValidSchoolSettings(incoming())
+        && incoming().id == schoolId
+        && incoming().updated_at == request.time;
+      allow update: if isValidId(schoolId)
+        && isSchoolId(schoolId)
+        && isAdmin()
+        && isValidSchoolSettings(incoming())
+        && incoming().id == existing().id
+        && incoming().school_id == existing().school_id
+        && incoming().updated_at == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'school_name', 'slogan', 'logo_data_url', 'app_version',
+          'auto_sync_enabled', 'sync_interval_minutes', 'updated_by', 'updated_at'
+        ]);
+      allow delete: if false;
+    }
+
+    // 5. Classes
+    match /classes/{classId} {
+      allow get: if isValidId(classId) && isVerifiedUser() && isSchoolId(existing().school_id);
+      allow list: if isVerifiedUser() && resource.data.school_id == 'sdn-jetiskarangpung-1';
+      allow create: if isValidId(classId)
+        && isAdmin()
+        && isValidClassRoom(incoming())
+        && incoming().id == classId;
+      allow update: if isValidId(classId)
+        && isAdmin()
+        && isValidClassRoom(incoming())
+        && incoming().id == existing().id
+        && incoming().school_id == existing().school_id
+        && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'grade_level', 'academic_year', 'homeroom_teacher_id']);
+      allow delete: if isValidId(classId) && isSuperAdmin();
+    }
+
+    // 6. Halaqahs
+    match /halaqahs/{halaqahId} {
+      allow get: if isValidId(halaqahId) && isVerifiedUser() && isSchoolId(existing().school_id);
+      allow list: if isVerifiedUser() && resource.data.school_id == 'sdn-jetiskarangpung-1';
+      allow create: if isValidId(halaqahId)
+        && isAdmin()
+        && isValidHalaqah(incoming())
+        && incoming().id == halaqahId;
+      allow update: if isValidId(halaqahId)
+        && isAdmin()
+        && isValidHalaqah(incoming())
+        && incoming().id == existing().id
+        && incoming().school_id == existing().school_id
+        && incoming().diff(existing()).affectedKeys().hasOnly(['name', 'teacher_id', 'class_ids', 'schedule_note']);
+      allow delete: if isValidId(halaqahId) && isSuperAdmin();
+    }
+
+    // 7. Students
+    match /students/{studentId} {
+      allow get: if isValidId(studentId)
+        && isVerifiedUser()
+        && isSchoolId(existing().school_id)
+        && (
+          isAdmin()
+          || request.auth.uid == existing().get('student_uid', '')
+          || request.auth.uid in existing().guardian_uids
+          || request.auth.uid in existing().assigned_teacher_uids
+        );
+      allow list: if isVerifiedUser()
+        && resource.data.school_id == 'sdn-jetiskarangpung-1'
+        && (
+          isBootstrappedSuperAdminEmail()
+          || resource.data.student_uid == request.auth.uid
+          || request.auth.uid in resource.data.guardian_uids
+          || request.auth.uid in resource.data.assigned_teacher_uids
+          || request.auth.uid in resource.data.admin_uids
+        );
+      allow create: if isValidId(studentId)
+        && isAdmin()
+        && isValidStudent(incoming())
+        && incoming().id == studentId
+        && exists(/databases/$(database)/documents/classes/$(incoming().class_id))
+        && exists(/databases/$(database)/documents/halaqahs/$(incoming().halaqah_id));
+      allow update: if isValidId(studentId)
+        && isAdmin()
+        && isValidStudent(incoming())
+        && incoming().id == existing().id
+        && incoming().school_id == existing().school_id
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'nis_local', 'full_name', 'class_id', 'halaqah_id',
+          'guardian_ids', 'guardian_uids', 'assigned_teacher_uids', 'admin_uids', 'student_uid', 'status'
+        ]);
+      allow delete: if isValidId(studentId) && isSuperAdmin();
+    }
+
+    // 8. Guardians (WhatsApp Phone PII Strictly Isolated)
+    match /guardians/{guardianId} {
+      allow get: if isValidId(guardianId)
+        && isVerifiedUser()
+        && isSchoolId(existing().school_id)
+        && (
+          isAdmin()
+          || request.auth.uid == existing().get('guardian_uid', '')
+          || request.auth.uid in existing().assigned_teacher_uids
+        );
+      allow list: if isVerifiedUser()
+        && resource.data.school_id == 'sdn-jetiskarangpung-1'
+        && (
+          isBootstrappedSuperAdminEmail()
+          || resource.data.guardian_uid == request.auth.uid
+          || request.auth.uid in resource.data.assigned_teacher_uids
+          || request.auth.uid in resource.data.admin_uids
+        );
+      allow create: if isValidId(guardianId)
+        && isAdmin()
+        && isValidGuardian(incoming())
+        && incoming().id == guardianId
+        && incoming().updated_at == request.time;
+      allow update: if isValidId(guardianId)
+        && isValidGuardian(incoming())
+        && incoming().id == existing().id
+        && incoming().school_id == existing().school_id
+        && incoming().updated_at == request.time
+        && (
+          isAdmin()
+          || (
+            isActiveTeacher()
+            && request.auth.uid in existing().assigned_teacher_uids
+            && incoming().diff(existing()).affectedKeys().hasOnly([
+              'whatsapp_raw', 'whatsapp_e164', 'verification_status',
+              'communication_consent', 'consent_updated_at', 'updated_at'
+            ])
+          )
+        );
+      allow delete: if isValidId(guardianId) && isSuperAdmin();
+    }
+
+    // 9. Teacher Assignments
+    match /teacher_assignments/{assignmentId} {
+      allow get: if isValidId(assignmentId)
+        && isVerifiedUser()
+        && isSchoolId(existing().school_id)
+        && (isAdmin() || existing().teacher_uid == request.auth.uid);
+      allow list: if isVerifiedUser()
+        && resource.data.school_id == 'sdn-jetiskarangpung-1'
+        && (
+          isBootstrappedSuperAdminEmail()
+          || resource.data.teacher_uid == request.auth.uid
+          || request.auth.uid in resource.data.admin_uids
+        );
+      allow create: if isValidId(assignmentId)
+        && isAdmin()
+        && isValidTeacherAssignment(incoming())
+        && incoming().id == assignmentId;
+      allow update: if isValidId(assignmentId)
+        && isAdmin()
+        && isValidTeacherAssignment(incoming())
+        && incoming().id == existing().id
+        && incoming().school_id == existing().school_id
+        && incoming().teacher_uid == existing().teacher_uid
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'teacher_name', 'class_ids', 'halaqah_ids', 'student_ids',
+          'admin_uids', 'can_announce', 'can_manage_guardian_contacts'
+        ]);
+      allow delete: if isValidId(assignmentId) && isSuperAdmin();
+    }
+
+    // 10. Tahfidz Targets
+    match /tahfidz_targets/{targetId} {
+      allow get: if isValidId(targetId) && isVerifiedUser() && isSchoolId(existing().school_id);
+      allow list: if isVerifiedUser() && resource.data.school_id == 'sdn-jetiskarangpung-1';
+      allow create: if isValidId(targetId)
+        && isAdmin()
+        && isValidTahfidzTarget(incoming())
+        && incoming().id == targetId;
+      allow update: if isValidId(targetId)
+        && isAdmin()
+        && isValidTahfidzTarget(incoming())
+        && incoming().id == existing().id
+        && incoming().school_id == existing().school_id
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'scope', 'target_ref_id', 'period_label', 'start_date', 'end_date',
+          'surah_number', 'ayah_start', 'ayah_end', 'target_ayah_count'
+        ]);
+      allow delete: if isValidId(targetId) && isAdmin();
+    }
+
+    // 11. Memorization Records (Teacher-authored, Student/Guardian read, Terminal State Lock)
+    match /memorization_records/{recordId} {
+      allow get: if isValidId(recordId)
+        && isVerifiedUser()
+        && isSchoolId(existing().school_id)
+        && (
+          isAdmin()
+          || existing().teacher_uid == request.auth.uid
+          || request.auth.uid == existing().get('student_uid', '')
+          || request.auth.uid in existing().guardian_uids
+        );
+      allow list: if isVerifiedUser()
+        && resource.data.school_id == 'sdn-jetiskarangpung-1'
+        && (
+          isBootstrappedSuperAdminEmail()
+          || resource.data.teacher_uid == request.auth.uid
+          || resource.data.student_uid == request.auth.uid
+          || request.auth.uid in resource.data.guardian_uids
+          || request.auth.uid in resource.data.admin_uids
+        );
+      allow create: if isValidId(recordId)
+        && isValidMemorizationRecord(incoming())
+        && incoming().id == recordId
+        && incoming().created_at == request.time
+        && incoming().updated_at == request.time
+        && exists(/databases/$(database)/documents/students/$(incoming().student_id))
+        && (
+          isAdmin()
+          || (
+            isActiveTeacher()
+            && incoming().teacher_uid == request.auth.uid
+            && request.auth.uid in get(/databases/$(database)/documents/students/$(incoming().student_id)).data.assigned_teacher_uids
+          )
+        );
+      allow update: if isValidId(recordId)
+        && isValidMemorizationRecord(incoming())
+        && incoming().id == existing().id
+        && incoming().school_id == existing().school_id
+        && incoming().student_id == existing().student_id
+        && incoming().teacher_uid == existing().teacher_uid
+        && incoming().created_at == existing().created_at
+        && incoming().updated_at == request.time
+        && (
+          isAdmin()
+          || (
+            isActiveTeacher()
+            && existing().teacher_uid == request.auth.uid
+            && existing().status != 'lulus'
+            && incoming().diff(existing()).affectedKeys().hasOnly([
+              'kelancaran', 'ketepatan_bacaan', 'tajwid', 'makhraj', 'status',
+              'teacher_note', 'whatsapp_share_status', 'whatsapp_shared_at', 'updated_at'
+            ])
+          )
+          || (
+            isActiveTeacher()
+            && existing().teacher_uid == request.auth.uid
+            && existing().status == 'lulus'
+            && incoming().diff(existing()).affectedKeys().hasOnly([
+              'whatsapp_share_status', 'whatsapp_shared_at', 'updated_at'
+            ])
+          )
+        );
+      allow delete: if isValidId(recordId) && isSuperAdmin();
+    }
+
+    // 12. Murajaah Records
+    match /murajaah_records/{recordId} {
+      allow get: if isValidId(recordId)
+        && isVerifiedUser()
+        && isSchoolId(existing().school_id)
+        && (
+          isAdmin()
+          || existing().teacher_uid == request.auth.uid
+          || request.auth.uid == existing().get('student_uid', '')
+          || request.auth.uid in existing().guardian_uids
+        );
+      allow list: if isVerifiedUser()
+        && resource.data.school_id == 'sdn-jetiskarangpung-1'
+        && (
+          isBootstrappedSuperAdminEmail()
+          || resource.data.teacher_uid == request.auth.uid
+          || resource.data.student_uid == request.auth.uid
+          || request.auth.uid in resource.data.guardian_uids
+          || request.auth.uid in resource.data.admin_uids
+        );
+      allow create: if isValidId(recordId)
+        && isValidMurajaahRecord(incoming())
+        && incoming().id == recordId
+        && incoming().created_at == request.time
+        && incoming().updated_at == request.time
+        && exists(/databases/$(database)/documents/students/$(incoming().student_id))
+        && (
+          isAdmin()
+          || (
+            isActiveTeacher()
+            && incoming().teacher_uid == request.auth.uid
+            && request.auth.uid in get(/databases/$(database)/documents/students/$(incoming().student_id)).data.assigned_teacher_uids
+          )
+        );
+      allow update: if isValidId(recordId)
+        && isValidMurajaahRecord(incoming())
+        && incoming().id == existing().id
+        && incoming().school_id == existing().school_id
+        && incoming().student_id == existing().student_id
+        && incoming().teacher_uid == existing().teacher_uid
+        && incoming().created_at == existing().created_at
+        && incoming().updated_at == request.time
+        && (
+          isAdmin()
+          || (
+            isActiveTeacher()
+            && existing().teacher_uid == request.auth.uid
+            && existing().status != 'lulus'
+            && incoming().diff(existing()).affectedKeys().hasOnly([
+              'kelancaran', 'ketepatan_bacaan', 'tajwid', 'makhraj', 'status',
+              'teacher_note', 'whatsapp_share_status', 'whatsapp_shared_at', 'updated_at'
+            ])
+          )
+          || (
+            isActiveTeacher()
+            && existing().teacher_uid == request.auth.uid
+            && existing().status == 'lulus'
+            && incoming().diff(existing()).affectedKeys().hasOnly([
+              'whatsapp_share_status', 'whatsapp_shared_at', 'updated_at'
+            ])
+          )
+        );
+      allow delete: if isValidId(recordId) && isSuperAdmin();
+    }
+
+    // 13. Announcements
+    match /announcements/{announcementId} {
+      allow get: if isValidId(announcementId) && isVerifiedUser() && isSchoolId(existing().school_id);
+      allow list: if isVerifiedUser() && resource.data.school_id == 'sdn-jetiskarangpung-1';
+      allow create: if isValidId(announcementId)
+        && isValidAnnouncement(incoming())
+        && incoming().id == announcementId
+        && incoming().author_uid == request.auth.uid
+        && incoming().created_at == request.time
+        && incoming().updated_at == request.time
+        && (isAdmin() || isActiveTeacher());
+      allow update: if isValidId(announcementId)
+        && isValidAnnouncement(incoming())
+        && incoming().id == existing().id
+        && incoming().school_id == existing().school_id
+        && incoming().author_uid == existing().author_uid
+        && incoming().created_at == existing().created_at
+        && incoming().updated_at == request.time
+        && (
+          (isAdmin() && incoming().diff(existing()).affectedKeys().hasOnly([
+            'title', 'body', 'category', 'priority', 'target_audience',
+            'target_ref_id', 'start_at', 'end_at', 'is_published', 'is_archived', 'updated_at'
+          ]))
+          || (isActiveTeacher() && existing().author_uid == request.auth.uid
+            && incoming().diff(existing()).affectedKeys().hasOnly([
+              'title', 'body', 'category', 'priority', 'target_audience',
+              'target_ref_id', 'start_at', 'end_at', 'is_published', 'is_archived', 'updated_at'
+            ]))
+        );
+      allow delete: if isValidId(announcementId) && isAdmin();
+    }
+
+    // 14. Announcement Read Markers
+    match /announcement_reads/{readId} {
+      allow get: if isValidId(readId) && isOwner(existing().user_uid);
+      allow list: if isVerifiedUser() && resource.data.user_uid == request.auth.uid;
+      allow create: if isValidId(readId)
+        && isValidAnnouncementRead(incoming())
+        && incoming().id == readId
+        && incoming().user_uid == request.auth.uid
+        && incoming().read_at == request.time
+        && exists(/databases/$(database)/documents/announcements/$(incoming().announcement_id));
+      allow update, delete: if false;
+    }
+
+    // 15. Quiz Results
+    match /quiz_results/{resultId} {
+      allow get: if isValidId(resultId) && isVerifiedUser() && (isAdmin() || existing().owner_uid == request.auth.uid);
+      allow list: if isVerifiedUser()
+        && resource.data.school_id == 'sdn-jetiskarangpung-1'
+        && (
+          isBootstrappedSuperAdminEmail()
+          || resource.data.owner_uid == request.auth.uid
+          || request.auth.uid in resource.data.admin_uids
+        );
+      allow create: if isValidId(resultId)
+        && isValidQuizResult(incoming())
+        && incoming().id == resultId
+        && incoming().owner_uid == request.auth.uid
+        && incoming().completed_at == request.time;
+      allow update: if false;
+      allow delete: if isValidId(resultId) && isSuperAdmin();
+    }
+
+    // 16. Audit Logs (Append-Only, Immutable)
+    match /audit_logs/{logId} {
+      allow get: if isValidId(logId) && isAdmin();
+      allow list: if isBootstrappedSuperAdminEmail()
+        || (isVerifiedUser() && resource.data.actor_uid == request.auth.uid);
+      allow create: if isValidId(logId)
+        && isVerifiedUser()
+        && isValidAuditLog(incoming())
+        && incoming().id == logId
+        && incoming().actor_uid == request.auth.uid
+        && incoming().timestamp == request.time
+        && (
+          (isBootstrappedSuperAdminEmail() && incoming().actor_role == 'super_admin')
+          || (
+            exists(/databases/$(database)/documents/users/$(request.auth.uid))
+            && incoming().actor_role == get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role
+          )
+        );
+      allow update, delete: if false;
+    }
+  }
+}

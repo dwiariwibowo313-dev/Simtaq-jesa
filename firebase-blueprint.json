@@ -1,0 +1,373 @@
+{
+  "entities": {
+    "SystemBootstrap": {
+      "title": "SystemBootstrap",
+      "description": "Atomic one-time lock document binding the primary Super Admin account to a single verified Firebase Auth UID.",
+      "type": "object",
+      "properties": {
+        "super_admin_uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "maxLength": 160, "pattern": "^dwiariwibowo313@gmail\\.com$" },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "bootstrapped_at": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["super_admin_uid", "email", "school_id", "bootstrapped_at"]
+    },
+    "AdminMarker": {
+      "title": "AdminMarker",
+      "description": "Privileged admin marker keyed by Firebase Auth UID for zero-escalation role verification.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "role": { "type": "string", "enum": ["super_admin", "school_admin"] },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "created_at": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["uid", "role", "school_id", "created_at"]
+    },
+    "UserAccount": {
+      "title": "UserAccount",
+      "description": "Authenticated user profile with isolated email PII and server-enforced RBAC role.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "minLength": 5, "maxLength": 160 },
+        "display_name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "role": { "type": "string", "enum": ["super_admin", "school_admin", "teacher", "student", "guardian"] },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "is_active": { "type": "boolean" },
+        "linked_entity_id": { "type": "string", "maxLength": 128 },
+        "email_verified": { "type": "boolean" },
+        "created_at": { "type": "string", "format": "timestamp" },
+        "updated_at": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["uid", "email", "display_name", "role", "school_id", "is_active", "email_verified", "created_at", "updated_at"]
+    },
+    "SchoolSettings": {
+      "title": "SchoolSettings",
+      "description": "Single-school configuration for SDN Jetiskarangpung 1.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "school_name": { "type": "string", "minLength": 3, "maxLength": 120 },
+        "slogan": { "type": "string", "minLength": 3, "maxLength": 200 },
+        "logo_data_url": { "type": "string", "maxLength": 400000 },
+        "app_version": { "type": "string", "maxLength": 32 },
+        "auto_sync_enabled": { "type": "boolean" },
+        "sync_interval_minutes": { "type": "number" },
+        "updated_by": { "type": "string", "maxLength": 120 },
+        "updated_at": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["id", "school_id", "school_name", "slogan", "app_version", "auto_sync_enabled", "sync_interval_minutes", "updated_by", "updated_at"]
+    },
+    "ClassRoom": {
+      "title": "ClassRoom",
+      "description": "Class master record for SDN Jetiskarangpung 1.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "grade_level": { "type": "number" },
+        "academic_year": { "type": "string", "minLength": 4, "maxLength": 20 },
+        "homeroom_teacher_id": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["id", "school_id", "name", "grade_level", "academic_year"]
+    },
+    "Halaqah": {
+      "title": "Halaqah",
+      "description": "Tahfidz study group led by a teacher.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "teacher_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "class_ids": { "type": "array" },
+        "schedule_note": { "type": "string", "maxLength": 200 }
+      },
+      "required": ["id", "school_id", "name", "teacher_id", "class_ids", "schedule_note"]
+    },
+    "Student": {
+      "title": "Student",
+      "description": "Student record scoped strictly to SDN Jetiskarangpung 1 with bounded access arrays.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "nis_local": { "type": "string", "minLength": 2, "maxLength": 32 },
+        "full_name": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "class_id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "halaqah_id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "guardian_ids": { "type": "array" },
+        "guardian_uids": { "type": "array" },
+        "assigned_teacher_uids": { "type": "array" },
+        "student_uid": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["aktif", "lulus", "pindah"] }
+      },
+      "required": ["id", "school_id", "nis_local", "full_name", "class_id", "halaqah_id", "guardian_ids", "status"]
+    },
+    "Guardian": {
+      "title": "Guardian",
+      "description": "Guardian contact PII record (WhatsApp E.164 & consent) isolated to admin, assigned teachers, and linked guardian.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "full_name": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "relationship": { "type": "string", "enum": ["Ayah", "Ibu", "Wali"] },
+        "whatsapp_raw": { "type": "string", "maxLength": 32 },
+        "whatsapp_e164": { "type": "string", "maxLength": 24 },
+        "verification_status": { "type": "string", "enum": ["belum_diverifikasi", "terverifikasi"] },
+        "communication_consent": { "type": "boolean" },
+        "consent_updated_at": { "type": "string", "maxLength": 64 },
+        "student_ids": { "type": "array" },
+        "assigned_teacher_uids": { "type": "array" },
+        "guardian_uid": { "type": "string", "maxLength": 128 },
+        "updated_at": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["id", "school_id", "full_name", "relationship", "whatsapp_raw", "whatsapp_e164", "verification_status", "communication_consent", "student_ids", "updated_at"]
+    },
+    "TeacherAssignment": {
+      "title": "TeacherAssignment",
+      "description": "Explicit mapping of which classes, halaqahs, and students a teacher may monitor.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "teacher_uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "teacher_name": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "class_ids": { "type": "array" },
+        "halaqah_ids": { "type": "array" },
+        "student_ids": { "type": "array" },
+        "can_announce": { "type": "boolean" },
+        "can_manage_guardian_contacts": { "type": "boolean" }
+      },
+      "required": ["id", "school_id", "teacher_uid", "teacher_name", "class_ids", "halaqah_ids", "student_ids", "can_announce", "can_manage_guardian_contacts"]
+    },
+    "TahfidzTarget": {
+      "title": "TahfidzTarget",
+      "description": "Memorization target per student, class, or halaqah.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "scope": { "type": "string", "enum": ["student", "class", "halaqah"] },
+        "target_ref_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "period_label": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "start_date": { "type": "string", "maxLength": 32 },
+        "end_date": { "type": "string", "maxLength": 32 },
+        "surah_number": { "type": "number" },
+        "ayah_start": { "type": "number" },
+        "ayah_end": { "type": "number" },
+        "target_ayah_count": { "type": "number" }
+      },
+      "required": ["id", "school_id", "scope", "target_ref_id", "period_label", "start_date", "end_date", "surah_number", "ayah_start", "ayah_end", "target_ayah_count"]
+    },
+    "MemorizationRecord": {
+      "title": "MemorizationRecord",
+      "description": "Student memorization assessment record authored by a verified teacher.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "student_id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "student_uid": { "type": "string", "maxLength": 128 },
+        "guardian_uids": { "type": "array" },
+        "teacher_uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "teacher_name": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "class_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "halaqah_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "date": { "type": "string", "maxLength": 32 },
+        "surah_number": { "type": "number" },
+        "surah_name": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "ayah_start": { "type": "number" },
+        "ayah_end": { "type": "number" },
+        "unique_ayah_keys": { "type": "array" },
+        "kelancaran": { "type": "string", "maxLength": 48 },
+        "ketepatan_bacaan": { "type": "string", "maxLength": 48 },
+        "tajwid": { "type": "string", "maxLength": 48 },
+        "makhraj": { "type": "string", "maxLength": 48 },
+        "status": { "type": "string", "enum": ["menunggu_penilaian", "perlu_perbaikan", "lulus"] },
+        "teacher_note": { "type": "string", "maxLength": 500 },
+        "whatsapp_share_status": { "type": "string", "enum": ["belum_dibagikan", "whatsapp_dibuka", "dikonfirmasi_terkirim"] },
+        "whatsapp_shared_at": { "type": "string", "maxLength": 64 },
+        "created_at": { "type": "string", "format": "timestamp" },
+        "updated_at": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["id", "school_id", "student_id", "teacher_uid", "teacher_name", "class_id", "halaqah_id", "date", "surah_number", "surah_name", "ayah_start", "ayah_end", "unique_ayah_keys", "status", "whatsapp_share_status", "created_at", "updated_at"]
+    },
+    "MurajaahRecord": {
+      "title": "MurajaahRecord",
+      "description": "Student murajaah review record authored by a verified teacher.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "student_id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "student_uid": { "type": "string", "maxLength": 128 },
+        "guardian_uids": { "type": "array" },
+        "teacher_uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "teacher_name": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "class_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "halaqah_id": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "date": { "type": "string", "maxLength": 32 },
+        "surah_number": { "type": "number" },
+        "surah_name": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "ayah_start": { "type": "number" },
+        "ayah_end": { "type": "number" },
+        "kelancaran": { "type": "string", "maxLength": 48 },
+        "ketepatan_bacaan": { "type": "string", "maxLength": 48 },
+        "tajwid": { "type": "string", "maxLength": 48 },
+        "makhraj": { "type": "string", "maxLength": 48 },
+        "status": { "type": "string", "enum": ["menunggu_penilaian", "perlu_perbaikan", "lulus"] },
+        "teacher_note": { "type": "string", "maxLength": 500 },
+        "whatsapp_share_status": { "type": "string", "enum": ["belum_dibagikan", "whatsapp_dibuka", "dikonfirmasi_terkirim"] },
+        "whatsapp_shared_at": { "type": "string", "maxLength": 64 },
+        "created_at": { "type": "string", "format": "timestamp" },
+        "updated_at": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["id", "school_id", "student_id", "teacher_uid", "teacher_name", "class_id", "halaqah_id", "date", "surah_number", "surah_name", "ayah_start", "ayah_end", "status", "whatsapp_share_status", "created_at", "updated_at"]
+    },
+    "Announcement": {
+      "title": "Announcement",
+      "description": "School or teacher announcement targeted by role/class/halaqah.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "title": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "body": { "type": "string", "minLength": 3, "maxLength": 1500 },
+        "category": { "type": "string", "maxLength": 64 },
+        "priority": { "type": "string", "enum": ["Normal", "Penting", "Mendesak"] },
+        "target_audience": { "type": "string", "enum": ["all", "teacher", "student", "guardian", "class", "halaqah"] },
+        "target_ref_id": { "type": "string", "maxLength": 128 },
+        "author_uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "author_name": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "start_at": { "type": "string", "maxLength": 64 },
+        "end_at": { "type": "string", "maxLength": 64 },
+        "is_published": { "type": "boolean" },
+        "is_archived": { "type": "boolean" },
+        "created_at": { "type": "string", "format": "timestamp" },
+        "updated_at": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["id", "school_id", "title", "body", "category", "priority", "target_audience", "author_uid", "author_name", "start_at", "end_at", "is_published", "is_archived", "created_at", "updated_at"]
+    },
+    "AnnouncementRead": {
+      "title": "AnnouncementRead",
+      "description": "Per-user announcement read marker.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 200, "pattern": "^[a-zA-Z0-9_\\-:]+$" },
+        "announcement_id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "user_uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "read_at": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["id", "announcement_id", "user_uid", "read_at"]
+    },
+    "QuizResult": {
+      "title": "QuizResult",
+      "description": "Practice quiz score for Tajwid or MAPSi owned by a student UID.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "student_id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "owner_uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "module": { "type": "string", "enum": ["tajwid", "mapsi"] },
+        "package_title": { "type": "string", "minLength": 2, "maxLength": 160 },
+        "total_questions": { "type": "number" },
+        "correct_count": { "type": "number" },
+        "accuracy_percent": { "type": "number" },
+        "duration_seconds": { "type": "number" },
+        "weak_topics": { "type": "array" },
+        "weak_surahs": { "type": "array" },
+        "completed_at": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["id", "school_id", "student_id", "owner_uid", "module", "package_title", "total_questions", "correct_count", "accuracy_percent", "duration_seconds", "weak_topics", "weak_surahs", "completed_at"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable activity audit log for sensitive operations.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "school_id": { "type": "string", "maxLength": 40, "pattern": "^sdn-jetiskarangpung-1$" },
+        "actor_uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "actor_name": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "actor_role": { "type": "string", "enum": ["super_admin", "school_admin", "teacher", "student", "guardian"] },
+        "action": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "target": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "summary": { "type": "string", "minLength": 2, "maxLength": 400 },
+        "timestamp": { "type": "string", "format": "timestamp" }
+      },
+      "required": ["id", "school_id", "actor_uid", "actor_name", "actor_role", "action", "target", "summary", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/system_bootstrap/{docId}": {
+      "schema": { "$ref": "#/entities/SystemBootstrap" },
+      "description": "One-time atomic Super Admin lock document (id: super_admin)."
+    },
+    "/admins/{uid}": {
+      "schema": { "$ref": "#/entities/AdminMarker" },
+      "description": "Trusted admin marker documents for Super Admin and School Admin."
+    },
+    "/users/{uid}": {
+      "schema": { "$ref": "#/entities/UserAccount" },
+      "description": "Authenticated user account and RBAC role assignment."
+    },
+    "/school_settings/{schoolId}": {
+      "schema": { "$ref": "#/entities/SchoolSettings" },
+      "description": "Single-school configuration locked to sdn-jetiskarangpung-1."
+    },
+    "/classes/{classId}": {
+      "schema": { "$ref": "#/entities/ClassRoom" },
+      "description": "Class master data for SDN Jetiskarangpung 1."
+    },
+    "/halaqahs/{halaqahId}": {
+      "schema": { "$ref": "#/entities/Halaqah" },
+      "description": "Halaqah master data for SDN Jetiskarangpung 1."
+    },
+    "/students/{studentId}": {
+      "schema": { "$ref": "#/entities/Student" },
+      "description": "Student master records scoped to SDN Jetiskarangpung 1."
+    },
+    "/guardians/{guardianId}": {
+      "schema": { "$ref": "#/entities/Guardian" },
+      "description": "Guardian PII contact records isolated from unauthorized access."
+    },
+    "/teacher_assignments/{assignmentId}": {
+      "schema": { "$ref": "#/entities/TeacherAssignment" },
+      "description": "Assigned classes, halaqahs, and students per teacher UID."
+    },
+    "/tahfidz_targets/{targetId}": {
+      "schema": { "$ref": "#/entities/TahfidzTarget" },
+      "description": "Tahfidz memorization targets."
+    },
+    "/memorization_records/{recordId}": {
+      "schema": { "$ref": "#/entities/MemorizationRecord" },
+      "description": "Student memorization assessment records."
+    },
+    "/murajaah_records/{recordId}": {
+      "schema": { "$ref": "#/entities/MurajaahRecord" },
+      "description": "Student murajaah review records."
+    },
+    "/announcements/{announcementId}": {
+      "schema": { "$ref": "#/entities/Announcement" },
+      "description": "School and teacher announcements."
+    },
+    "/announcement_reads/{readId}": {
+      "schema": { "$ref": "#/entities/AnnouncementRead" },
+      "description": "Per-user read receipts for announcements."
+    },
+    "/quiz_results/{resultId}": {
+      "schema": { "$ref": "#/entities/QuizResult" },
+      "description": "Tajwid and MAPSi quiz outcomes."
+    },
+    "/audit_logs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Append-only security and assessment audit logs."
+    }
+  }
+}

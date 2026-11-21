@@ -1,0 +1,1768 @@
+MASTER PROMPT RAKSASA SIMTAQ
+
+SISTEM INFORMASI MANAJEMEN TAHFIDZ AL-QUR’AN
+
+SINGLE SCHOOL EDITION – SDN JETISKARANGPUNG 1
+
+SMART MUROTAL • SMART HIFDZIL • TALKING DUET • BELAJAR TAJWID INTERAKTIF
+• MAPSi HIFDZIL CHALLENGE
+
+FREE-FIRST • OFFLINE-FIRST • SECURE • PWA • RESPONSIVE
+
+------------------------------------------------------------------------
+
+1.  IDENTITAS DAN VISI APLIKASI
+
+Anda bertindak sebagai Senior Software Architect, Full-Stack Engineer,
+Firebase Security Engineer, Quranic Learning System Designer, Tajwid
+Learning Specialist, Audio Engineer, UI/UX Designer, PWA Specialist, dan
+Quality Assurance Engineer.
+
+Bangun aplikasi bernama:
+
+SIMTAQ – Sistem Informasi Manajemen Tahfidz Al-Qur’an
+
+Aplikasi dibuat khusus untuk:
+
+SDN Jetiskarangpung 1, Kalijambe, Kabupaten Sragen, Jawa Tengah.
+
+Identitas dan slogan sekolah:
+
+SDN JETISKARANGPUNG 1
+
+Sekolah Negeri Berkarakter Islami, Sekolah Para Juara.
+
+SIMTAQ merupakan platform terpadu untuk:
+
+-   Manajemen tahfidz sekolah.
+-   Manajemen guru dan siswa.
+-   Manajemen halaqah.
+-   Setoran hafalan.
+-   Murajaah.
+-   Smart Murotal.
+-   Smart Hifdzil.
+-   Talking Duet.
+-   Belajar Tajwid Interaktif.
+-   Kuis MAPSi Hifdzil Al-Qur’an.
+-   Simulasi lomba.
+-   Dashboard guru.
+-   Laporan perkembangan siswa.
+-   Portal wali siswa.
+-   Informasi dan pengumuman sekolah.
+-   Dukungan donasi sukarela pengembangan aplikasi.
+
+Aplikasi harus modern, elegan, profesional, ringan, mudah digunakan
+guru, dan ramah anak SD.
+
+Gunakan Material Design 3 sebagai referensi desain. Pastikan tampilan
+nyaman pada ponsel Android, tablet, dan komputer.
+
+2.  KETENTUAN FUNDAMENTAL: SATU SEKOLAH DAN GRATIS
+
+2.1 Single School
+
+Aplikasi hanya untuk SDN Jetiskarangpung 1.
+
+Bukan aplikasi multi-tenant.
+
+Tidak boleh ada:
+
+-   Pendaftaran lembaga lain.
+-   Pemilihan sekolah.
+-   Pergantian tenant.
+-   Dashboard lembaga lain.
+-   Pembuatan tenant baru.
+
+Identitas sekolah disimpan sebagai konfigurasi tetap.
+
+Field “school_id” boleh dipertahankan untuk konsistensi database, tetapi
+nilainya harus tetap dan tidak dapat diubah pengguna biasa.
+
+2.2 Gratis sebagai prioritas utama
+
+Aplikasi harus dapat dibangun dan dijalankan tanpa biaya operasional
+wajib.
+
+Hindari ketergantungan pada:
+
+-   Google Cloud Billing.
+-   Kartu kredit.
+-   Firebase Blaze Plan.
+-   Cloud Run berbayar.
+-   Cloud Functions berbayar.
+-   VPS berbayar.
+-   API AI berbayar.
+-   Speech-to-text berbayar.
+-   Text-to-speech berbayar.
+-   Database berbayar.
+-   Hosting berbayar.
+
+Prioritaskan:
+
+-   React.
+-   TypeScript.
+-   Vite.
+-   Firebase Authentication pada paket yang sesuai.
+-   Cloud Firestore Spark Plan jika memenuhi kebutuhan.
+-   Firebase Client SDK.
+-   Dexie.js.
+-   IndexedDB.
+-   PWA.
+-   Service Worker.
+-   HTML5 Audio API.
+-   Web Audio API jika diperlukan.
+-   Hosting statis gratis yang mendukung HTTPS dan SPA routing.
+
+Google AI Studio hanya merupakan alat bantu pengembangan, bukan layanan
+yang wajib digunakan saat aplikasi berjalan.
+
+Periksa ketentuan paket gratis dan batas kuota aktual sebelum memilih
+layanan.
+
+Jangan mengklaim layanan gratis tanpa batas.
+
+Jika fitur memerlukan layanan berbayar, laporkan dan berikan alternatif
+gratis. Jangan mengaktifkan Billing tanpa persetujuan.
+
+Jika kuota online habis, aplikasi tetap harus dapat digunakan secara
+offline untuk fitur yang telah tersedia secara lokal.
+
+3.  IDENTITAS PEMBUAT APLIKASI
+
+Identitas pembuat harus ditampilkan secara elegan dan profesional.
+
+Dwi Apriyono Ariwibowo, S.Pd.
+
+Guru SDN Jetiskarangpung 1, Kalijambe, Sragen.
+
+Buat halaman atau menu:
+
+Tentang SIMTAQ
+
+Desain halaman:
+
+-   Elegan.
+-   Bersih.
+-   Profesional.
+-   Tidak berlebihan.
+-   Tipografi nyaman dibaca.
+-   Komposisi visual seimbang.
+
+Tampilkan nama pembuat dengan tipografi lebih menonjol daripada
+keterangan jabatan.
+
+Tambahkan deskripsi:
+
+“SIMTAQ dikembangkan sebagai ikhtiar menghadirkan pengelolaan tahfidz
+dan pembelajaran Al-Qur’an yang lebih terarah, interaktif, dan mudah
+diakses. Aplikasi ini diharapkan membantu guru mendampingi siswa dalam
+belajar, menghafal, murajaah, dan memahami kaidah bacaan Al-Qur’an.”
+
+Tampilkan:
+
+-   Nama aplikasi.
+-   Versi aplikasi.
+-   Identitas sekolah.
+-   Identitas pembuat.
+-   Tujuan pengembangan.
+-   Informasi hak penggunaan materi dan audio sesuai sumber
+    masing-masing.
+
+Jangan mengarang gelar, jabatan, penghargaan, atau afiliasi pembuat.
+
+4.  MENU DONASI PENGEMBANGAN APLIKASI
+
+Tambahkan menu:
+
+Dukung Pengembangan SIMTAQ
+
+Tujuan: Memberi kesempatan kepada pengguna atau masyarakat yang ingin
+mendukung pengembangan dan pemeliharaan aplikasi secara sukarela.
+
+Tampilkan keterangan secara santun:
+
+“SIMTAQ dikembangkan untuk mendukung pembelajaran Al-Qur’an dan
+pengelolaan tahfidz di sekolah. Dukungan donasi bersifat sukarela dan
+akan membantu pengembangan, pemeliharaan, serta penyempurnaan aplikasi.”
+
+Donasi tidak boleh menjadi syarat menggunakan fitur pembelajaran.
+
+Jangan mengunci fitur utama karena pengguna tidak berdonasi.
+
+4.1 Informasi rekening
+
+Tampilkan informasi:
+
+-   Bank: Bank Jateng
+-   Nomor rekening: 3010033050
+-   Nama pemilik rekening: DWI APRIYONO ARIWIBOWO
+
+Buat tombol Salin Nomor Rekening.
+
+Tampilkan nama pemilik rekening secara jelas sebelum pengguna melakukan
+transfer.
+
+Pastikan nomor rekening dan nama pemilik tidak berubah atau tertukar.
+
+4.2 Alur donasi
+
+1.  Pengguna membuka menu Dukung Pengembangan SIMTAQ.
+2.  Aplikasi menampilkan informasi tujuan donasi.
+3.  Aplikasi menampilkan informasi rekening Bank Jateng.
+4.  Pengguna dapat menyalin nomor rekening.
+5.  Pengguna melakukan transfer melalui aplikasi perbankan.
+6.  Pengguna dapat kembali ke aplikasi.
+
+Tampilkan keterangan:
+
+“Pastikan nama penerima dan nomor rekening sesuai sebelum menyelesaikan
+transfer.”
+
+Jangan mengklaim transfer berhasil secara otomatis.
+
+Jangan membuat sistem verifikasi pembayaran palsu.
+
+Jangan menganggap pengguna telah berdonasi hanya karena menyalin nomor
+rekening.
+
+Jika belum tersedia integrasi pembayaran resmi, nyatakan bahwa donasi
+dilakukan secara manual melalui transfer bank.
+
+Donasi bersifat sukarela dan tidak memberikan hak akses khusus atau
+perlakuan berbeda terhadap siswa.
+
+Jangan membuat, menampilkan, mengunggah, mengunduh, atau menggunakan QR
+Bima maupun QR pembayaran lainnya. Jangan menyediakan pilihan nominal
+atau input nominal donasi.
+
+5.  IDENTITAS VISUAL DAN PESAN INFORMASI SEKOLAH
+
+Bagian ini sangat penting. Seluruh dashboard dan portal siswa harus
+mencerminkan identitas SDN Jetiskarangpung 1.
+
+Identitas sekolah:
+
+SDN JETISKARANGPUNG 1
+
+Sekolah Negeri Berkarakter Islami, Sekolah Para Juara.
+
+Gunakan identitas tersebut sebagai elemen branding utama aplikasi, bukan
+sekadar teks kecil di bagian bawah halaman.
+
+5.1 Tampilan header sekolah
+
+Buat header atau area identitas sekolah yang elegan, profesional, dan
+nyaman dilihat.
+
+Tampilkan:
+
+-   Nama sekolah.
+-   Slogan sekolah.
+-   Logo sekolah jika tersedia.
+-   Nama portal atau halaman aktif.
+-   Identitas pengguna yang sedang login.
+
+Jangan membuat logo resmi sekolah sendiri jika belum tersedia. Sediakan
+tempat untuk logo yang dapat diunggah Admin Sekolah.
+
+5.2 Pesan informasi dashboard
+
+Buat komponen khusus bernama School Information Banner atau Pesan
+Informasi Sekolah.
+
+Pesan utama:
+
+“SDN Jetiskarangpung 1 Sekolah Negeri Berkarakter Islami, Sekolah Para
+Juara.”
+
+Desain:
+
+-   Elegan dan bersih.
+-   Profesional tetapi tetap hangat.
+-   Tidak terlalu besar sehingga mengganggu area kerja.
+-   Tipografi jelas.
+-   Hierarki visual yang baik.
+-   Warna harmonis dan tidak mencolok berlebihan.
+-   Sudut komponen lembut.
+-   Jarak antarelemen seimbang.
+-   Ikon sederhana bila diperlukan.
+-   Animasi sangat ringan atau tanpa animasi.
+
+Gunakan identitas warna sekolah yang konsisten: hijau daun, emas, dan
+putih. Pastikan kontras teks tetap nyaman dibaca.
+
+5.3 Pesan informasi portal siswa
+
+Pada portal siswa, tampilkan pesan yang lebih ramah dan memotivasi.
+
+Contoh pesan utama:
+
+Selamat Datang di SIMTAQ!
+
+“Belajar Al-Qur’an, memperkuat hafalan, memperindah bacaan, dan meraih
+prestasi.”
+
+Tampilkan identitas sekolah:
+
+SDN Jetiskarangpung 1 Sekolah Negeri Berkarakter Islami, Sekolah Para
+Juara.
+
+Pesan tambahan yang dapat digunakan secara bergantian:
+
+-   “Ayo belajar dan menghafal Al-Qur’an dengan semangat!”
+-   “Setiap ayat yang dipelajari adalah langkah menuju kebaikan.”
+-   “Terus berlatih, rajin murajaah, dan jadilah generasi berprestasi.”
+-   “Belajar dengan tekun, berakhlak mulia, dan pantang menyerah.”
+
+Gunakan bahasa yang positif, sederhana, santun, dan sesuai usia anak SD.
+
+Jangan menampilkan pesan yang mempermalukan siswa yang belum mencapai
+target.
+
+5.4 Pengelolaan pengumuman oleh Admin dan Guru
+
+Buat sistem pengumuman yang memungkinkan Admin Sekolah atau Guru yang
+memiliki hak akses untuk membuat pesan.
+
+Field pengumuman:
+
+-   Judul.
+-   Isi pesan.
+-   Pembuat.
+-   Tanggal dibuat.
+-   Tanggal mulai tampil.
+-   Tanggal berakhir.
+-   Target penerima.
+-   Prioritas.
+-   Status publikasi.
+-   Status arsip.
+
+Target penerima dapat berupa:
+
+-   Semua pengguna.
+-   Guru.
+-   Siswa.
+-   Wali siswa.
+-   Kelas tertentu.
+-   Halaqah tertentu.
+
+Jenis pesan:
+
+-   Informasi umum.
+-   Pengumuman penting.
+-   Jadwal kegiatan.
+-   Pengingat target hafalan.
+-   Informasi pembelajaran.
+-   Motivasi belajar.
+
+Sediakan tiga tingkat prioritas:
+
+-   Normal.
+-   Penting.
+-   Mendesak.
+
+Jangan menggunakan warna peringatan secara berlebihan.
+
+Pengumuman mendesak boleh lebih menonjol, tetapi tetap elegan.
+
+5.5 Perilaku pesan
+
+-   Pesan aktif hanya tampil pada target penerima yang sesuai.
+-   Pesan kedaluwarsa tidak tampil sebagai pengumuman aktif.
+-   Pesan dapat diarsipkan.
+-   Siswa dapat membaca pesan dengan mudah.
+-   Guru dapat melihat pesan yang relevan dengan kelasnya.
+-   Admin dapat mengelola seluruh pengumuman.
+-   Jangan menampilkan pesan berulang secara mengganggu.
+-   Sediakan penanda pesan baru dan sudah dibaca.
+-   Pastikan pengumuman dapat dimuat dari cache ketika offline jika
+    sebelumnya telah tersimpan.
+
+Jangan mencampur pesan informasi sekolah dengan notifikasi error teknis
+aplikasi.
+
+6.  STRUKTUR PORTAL DAN HAK AKSES
+
+Buat empat portal:
+
+1.  Super Admin.
+2.  Admin Sekolah.
+3.  Guru/Muhafidz.
+4.  Portal Siswa dan Wali.
+
+Tidak perlu portal Kepala Sekolah tersendiri.
+
+Super Admin
+
+-   Mengatur konfigurasi aplikasi.
+-   Mengelola akun Admin Sekolah.
+-   Mengelola keamanan.
+-   Melihat audit log.
+-   Mengelola versi aplikasi.
+-   Mengelola konfigurasi sistem.
+
+Admin Sekolah
+
+-   Mengelola guru.
+-   Mengelola siswa.
+-   Mengelola wali.
+-   Mengelola kelas.
+-   Mengelola halaqah.
+-   Mengatur penugasan guru.
+-   Mengatur target tahfidz.
+-   Mengelola materi dan paket kuis.
+-   Mengelola pengumuman sekolah.
+-   Melihat laporan sekolah.
+
+Guru/Muhafidz
+
+-   Mengelola siswa yang ditugaskan.
+-   Mengatur target hafalan.
+-   Mencatat setoran.
+-   Mencatat murajaah.
+-   Memberikan penilaian.
+-   Mengelola latihan.
+-   Membuat paket kuis MAPSi.
+-   Mengelola penilaian tajwid.
+-   Memantau progres Smart Murotal dan Smart Hifdzil.
+-   Membuat pengumuman sesuai hak akses.
+
+Siswa dan Wali
+
+Siswa:
+
+-   Belajar Smart Murotal.
+-   Belajar Smart Hifdzil.
+-   Belajar Tajwid.
+-   Mengikuti kuis.
+-   Melihat progres.
+-   Membaca pengumuman sekolah.
+
+Wali:
+
+-   Melihat perkembangan anak.
+-   Melihat laporan guru.
+-   Melihat target dan capaian hafalan.
+-   Melihat hasil latihan.
+-   Membaca pengumuman yang ditujukan kepada wali.
+
+Wali tidak boleh mengubah nilai guru.
+
+Keamanan akun
+
+Sistem akun berjenjang:
+
+-   Super Admin mengelola akun Admin Sekolah.
+-   Admin Sekolah mengelola akun Guru.
+-   Guru menginisiasi akses siswa berdasarkan data siswa yang telah
+    terdaftar.
+
+Jangan menyimpan password atau PIN plaintext.
+
+Jangan membuat token palsu dan mengklaimnya sebagai Firebase ID Token.
+
+Jangan menaruh secret key di frontend.
+
+Jangan mengandalkan validasi role pada tampilan saja.
+
+Jika mekanisme pembuatan akun berjenjang membutuhkan backend tepercaya
+yang tidak tersedia secara gratis, jelaskan keterbatasannya dan berikan
+alternatif aman.
+
+7.  MODUL MANAJEMEN TAHFIDZ
+
+Sediakan:
+
+-   Data kelas.
+-   Data siswa.
+-   Data guru.
+-   Data wali.
+-   Data halaqah.
+-   Penugasan guru.
+-   Target hafalan.
+-   Setoran hafalan.
+-   Murajaah.
+-   Penilaian.
+-   Catatan guru.
+-   Laporan individu.
+-   Laporan kelas.
+-   Laporan sekolah.
+
+Catatan setoran minimal memuat:
+
+-   Siswa.
+-   Guru.
+-   Tanggal.
+-   Surah.
+-   Ayat awal.
+-   Ayat akhir.
+-   Kelancaran.
+-   Ketepatan bacaan.
+-   Tajwid.
+-   Makhraj.
+-   Catatan.
+
+Bedakan aktivitas mendengarkan, berlatih, mengikuti tes, dan setoran
+yang sudah dinilai guru.
+
+8.  SMART MUROTAL
+
+Buat modul belajar Al-Qur’an dengan audio qari dan tampilan ayat.
+
+Fitur:
+
+-   Tampilan teks Arab.
+-   Nama surah.
+-   Nomor ayat.
+-   Terjemahan jika tersedia dan tervalidasi.
+-   Audio qari.
+-   Sorotan ayat aktif.
+-   Autoscroll.
+-   Play.
+-   Pause.
+-   Stop.
+-   Ayat sebelumnya.
+-   Ayat berikutnya.
+-   Pemutaran satu surah.
+-   Pemutaran rentang ayat.
+-   Pengulangan satu ayat.
+-   Pengulangan beberapa ayat.
+-   Simpan posisi terakhir.
+
+Jumlah pengulangan: 1, 3, 5, 10, 20, atau tanpa batas.
+
+Jeda: 0, 2, 3, 5, 10 detik atau kustom.
+
+Sinkronisasi visual harus menggunakan timestamp atau metadata ayat yang
+tervalidasi.
+
+Jika timestamp tidak tersedia, gunakan mode per ayat. Jangan mengarang
+waktu sinkronisasi.
+
+9.  SMART HIFDZIL
+
+Buat modul hafalan dengan metode:
+
+-   Dengar.
+-   Lihat dan dengar.
+-   Dengar dan ulangi.
+-   Pengulangan ayat.
+-   Pengulangan rentang ayat.
+-   Hafalan bertahap.
+-   Ayat disembunyikan.
+-   Sambung ayat.
+-   Uji hafalan.
+
+Pengaturan:
+
+-   Surah.
+-   Rentang ayat.
+-   Qari.
+-   Jumlah pengulangan.
+-   Jeda.
+-   Kecepatan audio jika didukung.
+-   Tampilkan/sembunyikan ayat.
+-   Simpan progres.
+
+Jangan menyimpulkan siswa hafal hanya karena audio telah diputar
+berkali-kali.
+
+10. TALKING DUET
+
+Buat pengalaman belajar bergantian antara qari dan siswa.
+
+Alur:
+
+1.  Qari membaca ayat.
+2.  Audio berhenti.
+3.  Aplikasi memberikan jeda.
+4.  Siswa menirukan bacaan.
+5.  Siswa dapat merekam suara jika diizinkan.
+6.  Qari memutar ulang contoh.
+7.  Berlanjut ke ayat berikutnya.
+
+Prioritaskan Talking Duet dasar tanpa AI berbayar.
+
+Rekaman siswa:
+
+-   Memerlukan izin mikrofon.
+-   Tidak boleh dilakukan diam-diam.
+-   Disimpan lokal secara default.
+-   Tidak diunggah otomatis.
+-   Dapat diputar ulang dan dihapus.
+-   Dilindungi dengan pengaturan privasi.
+
+Jangan mengklaim penilaian tajwid otomatis akurat tanpa teknologi yang
+teruji.
+
+11. KATALOG QARI
+
+Sediakan struktur katalog yang dapat menampung:
+
+-   Mishary Rashid Alafasy.
+-   Mahmoud Khalil Al-Husary.
+-   Abdul Basit Abdus Samad.
+-   Muhammad Siddiq Al-Minshawi.
+-   Abdurrahman As-Sudais.
+-   Saud Al-Shuraim.
+-   Maher Al-Muaiqly.
+-   Qari lainnya.
+
+Setiap rekaman harus diverifikasi:
+
+-   Sumber.
+-   Lisensi.
+-   Atribusi.
+-   Ketersediaan per ayat.
+-   Durasi.
+-   Timestamp.
+-   Izin unduhan.
+-   Izin penggunaan offline.
+
+Jangan mengambil audio yang tidak memiliki izin penggunaan sesuai tujuan
+aplikasi.
+
+Jangan mengunggah ulang audio yang tidak memiliki izin.
+
+Jangan membuat audio Al-Qur’an menggunakan generative AI.
+
+12. MODUL BELAJAR TAJWID INTERAKTIF
+
+Buat modul khusus:
+
+BELAJAR TAJWID
+
+Modul ini harus menjadi bagian inti SIMTAQ dan terintegrasi dengan MAPSi
+Hifdzil Challenge.
+
+Tujuannya membantu siswa memahami hukum tajwid melalui penjelasan
+sederhana, contoh visual ayat, contoh audio, dan latihan pilihan ganda.
+
+Desain harus ramah anak SD, bertahap, menarik, dan mudah dipahami.
+
+12.1 Struktur pembelajaran
+
+Buat halaman utama Belajar Tajwid dengan:
+
+-   Pengenalan tajwid.
+-   Daftar materi.
+-   Tingkat pembelajaran.
+-   Progres siswa.
+-   Materi yang sudah dipelajari.
+-   Materi yang perlu diulang.
+-   Latihan.
+-   Hasil evaluasi.
+
+Materi disusun dari mudah ke lebih sulit.
+
+12.2 Materi tajwid
+
+Sediakan struktur materi untuk topik berikut:
+
+A. Hukum Nun Sukun dan Tanwin:
+
+-   Izhar Halqi.
+-   Idgham Bighunnah.
+-   Idgham Bilaghunnah.
+-   Iqlab.
+-   Ikhfa Haqiqi.
+
+B. Hukum Mim Sukun:
+
+-   Izhar Syafawi.
+-   Idgham Mimi.
+-   Ikhfa Syafawi.
+
+C. Hukum Ghunnah:
+
+-   Pengertian ghunnah.
+-   Penerapan pada nun dan mim bertasydid.
+
+D. Hukum Mad:
+
+-   Mad Thabi’i.
+-   Mad Wajib Muttashil.
+-   Mad Jaiz Munfashil.
+-   Mad ’Aridh Lissukun.
+-   Mad Lazim.
+-   Jenis mad lain yang relevan dengan tingkat pembelajaran siswa.
+
+E. Hukum Qalqalah:
+
+-   Qalqalah Sugra.
+-   Qalqalah Kubra.
+
+F. Hukum Alif Lam:
+
+-   Alif Lam Qamariyah.
+-   Alif Lam Syamsiyah.
+
+G. Hukum Ra:
+
+-   Tafkhim.
+-   Tarqiq.
+-   Contoh yang sesuai dengan tingkat siswa.
+
+H. Waqaf dan Ibtida:
+
+-   Pengenalan tanda waqaf.
+-   Cara berhenti.
+-   Cara memulai kembali bacaan.
+
+I. Makhraj dan sifat huruf:
+
+-   Pengenalan tempat keluarnya huruf.
+-   Contoh pelafalan.
+-   Pengenalan sifat huruf sesuai kurikulum yang digunakan guru.
+
+Materi dapat dikembangkan, tetapi jangan menampilkan kaidah yang belum
+diverifikasi.
+
+12.3 Format setiap materi tajwid
+
+Setiap materi harus memiliki:
+
+1.  Nama hukum tajwid.
+2.  Pengertian sederhana.
+3.  Penjelasan sesuai usia siswa SD.
+4.  Huruf atau kondisi penyebab hukum tersebut.
+5.  Cara mengenali hukum tersebut.
+6.  Contoh tulisan Arab.
+7.  Contoh potongan ayat Al-Qur’an.
+8.  Referensi surah dan nomor ayat.
+9.  Visual penanda bagian yang mengandung hukum tajwid.
+10. Contoh audio bacaan yang benar.
+11. Penjelasan cara membaca.
+12. Contoh pembanding jika diperlukan.
+13. Latihan identifikasi.
+14. Kuis pilihan ganda.
+
+Gunakan bahasa Indonesia yang sederhana dan tidak terlalu teoritis.
+
+12.4 Contoh visual ayat
+
+Tampilkan potongan ayat yang memuat hukum tajwid yang sedang dipelajari.
+
+Contoh:
+
+-   Teks Arab.
+-   Bagian huruf atau kata yang mengandung hukum tajwid diberi warna.
+-   Bagian lain tetap tampil normal.
+-   Sediakan legenda warna.
+-   Tampilkan nama hukum tajwid.
+-   Tampilkan referensi surah dan ayat.
+
+Gunakan warna secara konsisten.
+
+Warna hanya berfungsi sebagai bantuan pembelajaran, bukan pengganti
+tanda baca asli Al-Qur’an.
+
+Jangan mengubah teks Arab atau harakat asli demi memberi warna.
+
+Gunakan rendering teks yang mempertahankan susunan huruf dan harakat
+dengan benar.
+
+Jika menggunakan HTML untuk mewarnai bagian teks, pastikan pemisahan
+huruf tidak merusak bentuk sambungan Arab.
+
+Utamakan sumber teks yang memiliki penanda kata atau rentang karakter
+tervalidasi.
+
+12.5 Contoh audio tajwid
+
+Setiap materi tajwid harus memiliki contoh audio yang sesuai.
+
+Alur:
+
+1.  Siswa melihat contoh ayat.
+2.  Siswa menekan tombol dengarkan.
+3.  Audio qari membaca contoh.
+4.  Bagian yang mengandung hukum tajwid disorot.
+5.  Siswa mendengarkan ulang.
+6.  Aplikasi menjelaskan bagian yang perlu diperhatikan.
+
+Jika tersedia, sediakan:
+
+-   Audio bacaan lengkap.
+-   Audio potongan contoh.
+-   Audio pembanding untuk membedakan hukum yang mirip.
+
+Audio harus berasal dari sumber yang sah dan telah diverifikasi.
+
+Jangan membuat audio bacaan Al-Qur’an sintetis menggunakan AI.
+
+Jika audio potongan tidak tersedia secara sah, gunakan audio ayat
+lengkap dan metadata segmen yang tervalidasi.
+
+12.6 Latihan tebak hukum tajwid dari visual
+
+Buat jenis soal:
+
+Siswa melihat potongan ayat Al-Qur’an dengan satu bagian ditandai.
+
+Pertanyaan:
+
+“Apakah hukum tajwid pada bagian yang ditandai?”
+
+Sediakan empat pilihan jawaban.
+
+Contoh bentuk pilihan: A. Izhar Halqi. B. Idgham Bighunnah. C. Iqlab. D.
+Ikhfa Haqiqi.
+
+Satu jawaban benar untuk soal yang dirancang memiliki satu jawaban.
+
+Setelah menjawab:
+
+-   Tampilkan benar atau salah.
+-   Tampilkan jawaban yang benar.
+-   Berikan penjelasan sederhana.
+-   Sorot bagian ayat.
+-   Berikan alasan mengapa hukum tersebut berlaku.
+
+12.7 Latihan tebak hukum tajwid dari audio
+
+Buat jenis soal:
+
+1.  Siswa mendengarkan audio ayat.
+2.  Siswa dapat memutar ulang sesuai batas yang ditentukan.
+3.  Siswa diminta mengidentifikasi hukum tajwid yang terdengar.
+4.  Siswa memilih satu dari empat jawaban.
+5.  Setelah menjawab, tampilkan potongan ayat yang relevan.
+6.  Berikan penjelasan visual dan audio.
+
+Sediakan pilihan:
+
+-   Dengarkan audio.
+-   Dengarkan ulang.
+-   Tampilkan petunjuk setelah menjawab.
+-   Lihat referensi surah dan ayat.
+
+Jangan menampilkan jawaban sebelum siswa menyelesaikan soal jika sedang
+dalam mode ujian.
+
+12.8 Latihan campuran visual dan audio
+
+Sediakan kombinasi:
+
+-   Menebak hukum tajwid dari potongan ayat.
+-   Menebak hukum tajwid dari audio.
+-   Memilih contoh ayat yang sesuai dengan suatu hukum.
+-   Membedakan dua hukum tajwid yang mirip.
+-   Menentukan huruf penyebab hukum.
+-   Mengidentifikasi bacaan yang benar dari contoh audio yang telah
+    diverifikasi.
+
+Semua soal pilihan ganda menggunakan empat opsi.
+
+12.9 Tingkat kesulitan
+
+Sediakan:
+
+-   Sangat Mudah.
+-   Mudah.
+-   Sedang.
+-   Sulit.
+-   Tantangan.
+
+Setiap tingkat memiliki materi, contoh, dan latihan yang sesuai.
+
+12.10 Bank soal tajwid
+
+Guru dapat:
+
+-   Melihat bank soal.
+-   Memilih materi.
+-   Membuat paket latihan.
+-   Mengatur jumlah soal.
+-   Mengatur waktu.
+-   Mengatur batas pemutaran audio.
+-   Memilih tingkat kesulitan.
+-   Menerbitkan paket.
+-   Mengarsipkan paket.
+
+Jumlah soal: 5, 10, 15, 20, 25, atau kustom.
+
+12.11 Evaluasi tajwid
+
+Catat:
+
+-   Materi yang dipelajari.
+-   Jumlah soal.
+-   Jawaban benar.
+-   Jawaban salah.
+-   Akurasi.
+-   Waktu menjawab.
+-   Hukum tajwid yang telah dikuasai.
+-   Hukum tajwid yang masih tertukar.
+-   Rekomendasi belajar berikutnya.
+
+Dashboard guru harus dapat mengetahui materi tajwid mana yang paling
+sulit dipahami siswa.
+
+12.12 Validasi tajwid
+
+Akurasi materi tajwid sangat penting.
+
+Jangan menggunakan AI untuk mengarang:
+
+-   Kaidah tajwid.
+-   Contoh ayat.
+-   Referensi ayat.
+-   Contoh bacaan.
+-   Kunci jawaban.
+-   Hukum bacaan.
+
+Setiap materi dan soal harus diverifikasi berdasarkan sumber
+pembelajaran tajwid yang tepercaya dan diperiksa guru yang kompeten.
+
+Jika ada perbedaan penjelasan berdasarkan riwayat bacaan atau pendekatan
+pembelajaran, tandai dan minta verifikasi guru.
+
+Guru harus dapat mengoreksi materi dan menyetujui soal sebelum
+dipublikasikan.
+
+Jangan mengklaim siswa telah menguasai tajwid hanya karena memperoleh
+nilai kuis tinggi.
+
+13. MODUL KUIS MAPSi HIFDZIL AL-QUR’AN
+
+MAPSi Hifdzil Challenge harus menjadi modul inti SIMTAQ.
+
+Jenis kuis:
+
+1.  Tebak Nama Surah.
+2.  Tebak Nomor Ayat.
+3.  Tebak Lanjutan Ayat.
+4.  Tebak Potongan Ayat.
+5.  Tebak Akhir Ayat.
+6.  Identifikasi Surah dan Ayat.
+7.  Ayat Sebelum.
+8.  Ayat Sesudah.
+9.  Ayat Mirip.
+10. Sambung Ayat Lisan.
+11. Simulasi MAPSi.
+12. Kuis Identifikasi Hukum Tajwid.
+
+Untuk pilihan ganda:
+
+-   Empat pilihan jawaban.
+-   Satu jawaban benar untuk soal dengan satu jawaban.
+-   Soal dan opsi harus tervalidasi.
+
+Tingkat kesulitan:
+
+-   Pemula.
+-   Menengah.
+-   Mahir.
+-   Simulasi MAPSi.
+
+Guru dapat memilih surah, ayat, jenis soal, jumlah soal, durasi, dan
+batas pengulangan audio.
+
+Jangan mengklaim format simulasi sebagai format resmi MAPSi sebelum
+diverifikasi dengan pedoman lomba yang berlaku.
+
+Dashboard MAPSi
+
+Tampilkan:
+
+-   Nilai.
+-   Akurasi.
+-   Waktu menjawab.
+-   Kelemahan surah.
+-   Ayat yang tertukar.
+-   Kelemahan tajwid.
+-   Hasil simulasi.
+-   Penilaian lisan.
+-   Grafik perkembangan.
+-   Rekomendasi latihan.
+
+14. VALIDASI TEKS AL-QUR’AN DAN AUDIO
+
+Akurasi Al-Qur’an adalah prioritas tertinggi.
+
+Dilarang:
+
+-   Mengarang ayat.
+-   Mengarang harakat.
+-   Mengarang nomor ayat.
+-   Mengarang nama surah.
+-   Mengarang kunci jawaban.
+-   Menghasilkan audio bacaan Al-Qur’an sintetis.
+-   Mengarang timestamp audio.
+-   Mengarang contoh tajwid.
+
+Gunakan sumber teks Al-Qur’an yang terpercaya.
+
+Setiap ayat minimal memiliki:
+
+-   surah_number.
+-   surah_name.
+-   ayah_number.
+-   arabic_text.
+-   source_reference.
+-   verification_status.
+-   verified_by.
+-   verified_at.
+
+Setiap contoh tajwid harus memiliki:
+
+-   hukum_tajwid.
+-   surah_number.
+-   ayah_number.
+-   word_reference.
+-   highlighted_segment.
+-   explanation.
+-   audio_reference.
+-   verification_status.
+-   verified_by.
+-   verified_at.
+
+Guru harus dapat memeriksa dan menyetujui materi sebelum dipublikasikan.
+
+15. AUDIO OFFLINE DAN KINERJA
+
+Prioritaskan pengalaman audio yang nyaman pada Android kelas bawah dan
+menengah.
+
+Gunakan:
+
+-   Streaming saat online jika sumber mengizinkan.
+-   Unduhan atas permintaan.
+-   Penyimpanan lokal privat.
+-   Cache terkontrol.
+-   Metadata audio.
+-   Pemuatan bertahap.
+-   Penghapusan audio offline.
+-   Informasi kapasitas penyimpanan.
+
+Audio offline hanya boleh disediakan jika lisensinya mengizinkan.
+
+Jangan mengunggah ulang audio yang tidak memiliki izin.
+
+Jangan mewajibkan Firebase Storage untuk audio.
+
+Jika internet terputus, materi yang sudah diunduh harus tetap dapat
+digunakan.
+
+Jangan menjanjikan pemutaran latar belakang ketika layar terkunci
+sebelum diuji pada browser dan perangkat Android yang digunakan.
+
+16. OFFLINE-FIRST DAN PENYIMPANAN LOKAL
+
+Gunakan:
+
+-   IndexedDB.
+-   Dexie.js.
+-   Service Worker.
+-   PWA.
+-   Offline queue.
+
+Simpan secara lokal:
+
+-   Pengaturan.
+-   Data siswa yang diperlukan.
+-   Materi.
+-   Metadata audio.
+-   Paket kuis.
+-   Hasil latihan.
+-   Progres.
+-   Riwayat aktivitas.
+-   Rekaman siswa dengan izin.
+
+Jangan menghapus data lokal sebelum sinkronisasi berhasil dikonfirmasi.
+
+Gunakan unique ID, idempotency, retry, dan conflict resolution.
+
+17. SINKRONISASI
+
+Default auto sync setiap 10 menit ketika aplikasi aktif dan internet
+tersedia.
+
+Sediakan:
+
+-   Auto Sync ON/OFF.
+-   Interval custom.
+-   Manual Sync.
+-   Status sinkronisasi.
+-   Riwayat.
+-   Jumlah data tertunda.
+
+Gunakan incremental sync.
+
+Jangan membaca seluruh koleksi setiap kali sinkronisasi.
+
+Jangan mengirim audio atau rekaman suara siswa secara otomatis.
+
+Jika kuota gratis habis, data lokal tetap dapat digunakan.
+
+18. DATABASE DAN STRUKTUR DATA
+
+Rancang Firestore secara modular.
+
+Koleksi yang dapat digunakan:
+
+-   users
+-   school_settings
+-   classes
+-   halaqahs
+-   students
+-   guardians
+-   teacher_assignments
+-   tahfidz_targets
+-   memorization_records
+-   murajaah_records
+-   quran_surahs
+-   quran_verses
+-   qari_catalog
+-   audio_assets
+-   tajwid_topics
+-   tajwid_examples
+-   tajwid_question_banks
+-   question_banks
+-   question_packages
+-   quiz_sessions
+-   quiz_results
+-   oral_assessments
+-   learning_progress
+-   announcements
+-   announcement_reads
+-   sync_metadata
+-   audit_logs
+
+Struktur Dexie:
+
+-   cached_users
+-   cached_students
+-   cached_classes
+-   cached_quran_surahs
+-   cached_quran_verses
+-   cached_audio_metadata
+-   cached_tajwid_topics
+-   cached_tajwid_examples
+-   cached_question_packages
+-   cached_announcements
+-   local_quiz_sessions
+-   local_quiz_results
+-   local_learning_progress
+-   local_audio_recordings
+-   pending_sync
+-   sync_history
+
+Gunakan indeks sesuai kebutuhan query nyata.
+
+Jangan membuat koleksi berlebihan.
+
+19. KEAMANAN DAN PRIVASI
+
+Terapkan:
+
+-   Firebase Authentication.
+-   Firestore Security Rules.
+-   Default-deny.
+-   RBAC.
+-   Validasi kepemilikan data.
+-   Audit log.
+-   Session management.
+-   Validasi input.
+-   Perlindungan data anak.
+
+Jangan:
+
+-   Menyimpan password plaintext.
+-   Menaruh secret key di frontend.
+-   Membuka seluruh database.
+-   Mengizinkan perubahan role oleh pengguna.
+-   Mengandalkan tampilan frontend sebagai satu-satunya pengaman.
+-   Mengklaim aman tanpa pengujian.
+
+Rekaman suara anak dilindungi dan tidak diunggah otomatis.
+
+20. DASHBOARD DAN ANALITIK
+
+Dashboard Super Admin:
+
+-   Pengguna.
+-   Aktivitas.
+-   Audit log.
+-   Status sistem.
+
+Dashboard Admin:
+
+-   Jumlah siswa.
+-   Jumlah guru.
+-   Kelas.
+-   Halaqah.
+-   Capaian tahfidz.
+-   Aktivitas Smart Murotal.
+-   Aktivitas Smart Hifdzil.
+-   Hasil tajwid.
+-   Hasil MAPSi.
+-   Pengumuman sekolah.
+
+Dashboard Guru:
+
+-   Siswa.
+-   Target.
+-   Setoran.
+-   Murajaah.
+-   Penilaian.
+-   Progres tajwid.
+-   Hasil kuis.
+-   Rekomendasi latihan.
+-   Pengumuman kelas.
+
+Dashboard Siswa:
+
+-   Target.
+-   Progres hafalan.
+-   Materi tajwid.
+-   Aktivitas terakhir.
+-   Hasil latihan.
+-   Pesan informasi sekolah.
+-   Pengumuman terbaru.
+-   Motivasi belajar.
+
+Dashboard Wali:
+
+-   Perkembangan anak.
+-   Target.
+-   Capaian.
+-   Catatan guru.
+-   Hasil latihan.
+-   Pengumuman yang relevan.
+
+21. UI/UX
+
+Gunakan tampilan:
+
+-   Modern.
+-   Elegan.
+-   Profesional.
+-   Ramah anak.
+-   Responsif.
+-   Ringan.
+-   Mudah digunakan.
+
+Sediakan:
+
+-   Navigasi jelas.
+-   Ikon konsisten.
+-   Tipografi nyaman.
+-   Kontras baik.
+-   Tombol besar untuk siswa.
+-   Teks Arab yang baik.
+-   Kontrol audio yang mudah.
+-   Loading state.
+-   Empty state.
+-   Error state.
+-   Offline indicator.
+-   Sync indicator.
+
+Identitas sekolah harus konsisten pada dashboard dan portal siswa:
+
+SDN Jetiskarangpung 1 Sekolah Negeri Berkarakter Islami, Sekolah Para
+Juara.
+
+Pesan informasi harus tampak sebagai bagian desain aplikasi yang
+menyatu, bukan pop-up yang mengganggu.
+
+Jangan menggunakan animasi berat, efek berlebihan, atau banner besar
+yang menghabiskan ruang layar.
+
+Halaman Tentang SIMTAQ dan Donasi harus memiliki tampilan yang konsisten
+dengan identitas aplikasi.
+
+22. PENGHEMATAN KUOTA DAN BIAYA
+
+Optimalkan:
+
+-   Firestore reads.
+-   Firestore writes.
+-   Bandwidth.
+-   Penyimpanan.
+-   Audio transfer.
+-   CPU.
+-   Memori.
+-   Baterai.
+
+Gunakan cache dan incremental sync.
+
+Jangan melakukan polling tanpa kebutuhan.
+
+Jangan mengunduh seluruh audio otomatis.
+
+Jangan menjanjikan kuota gratis tanpa batas.
+
+23. BACKUP DAN PEMULIHAN
+
+Sediakan:
+
+-   Ekspor data.
+-   Backup lokal.
+-   Restore.
+-   Validasi backup.
+-   Konfirmasi tindakan destruktif.
+
+Jangan mengklaim backup cloud jika belum diimplementasikan.
+
+Jangan menghapus data lama sebelum backup berhasil diverifikasi.
+
+24. TAHAPAN PENGEMBANGAN
+
+Kerjakan secara bertahap.
+
+PHASE 0 – FEASIBILITY AUDIT: Audit arsitektur, layanan gratis,
+autentikasi, keamanan, sumber Al-Qur’an, lisensi audio, audio offline,
+tajwid, dan donasi.
+
+PHASE 1 – FOUNDATION: React, TypeScript, Vite, PWA, Dexie, routing, UI
+dasar.
+
+PHASE 2 – AUTHENTICATION DAN SECURITY: Login, role, permission, akun
+berjenjang, Firestore Security Rules.
+
+PHASE 3 – MASTER DATA: Sekolah, kelas, guru, siswa, wali, halaqah.
+
+PHASE 4 – MANAJEMEN TAHFIDZ: Target, setoran, murajaah, penilaian,
+laporan.
+
+PHASE 5 – SMART MUROTAL: Katalog qari, audio, ayat, sorotan,
+pengulangan.
+
+PHASE 6 – SMART HIFDZIL DAN TALKING DUET: Mode dengar, tirukan, ulangi,
+sembunyikan ayat, rekaman lokal opsional.
+
+PHASE 7 – BELAJAR TAJWID: Materi, visual ayat, contoh audio, latihan
+pilihan ganda, evaluasi, dashboard guru.
+
+PHASE 8 – MAPSi HIFDZIL: Bank soal, paket soal, pilihan ganda, sambung
+ayat, simulasi, analitik.
+
+PHASE 9 – OFFLINE: Cache, materi offline, audio offline yang sah, hasil
+lokal.
+
+PHASE 10 – CLOUD SYNC: Incremental sync, auto sync 10 menit, custom
+interval, manual sync.
+
+PHASE 11 – DASHBOARD: Analitik, grafik, laporan, pengumuman, ekspor.
+
+PHASE 12 – IDENTITAS DAN DONASI: Halaman Tentang SIMTAQ, identitas
+pembuat, menu donasi, rekening Bank Jateng, dan tombol salin nomor
+rekening. Tidak ada QR pembayaran atau pilihan nominal donasi.
+
+PHASE 13 – QA DAN SECURITY HARDENING: Unit test, integration test,
+security test, offline test, audio test, Quran validation, tajwid
+validation, performance test.
+
+PHASE 14 – DEPLOYMENT READINESS: Build production, HTTPS, hosting, PWA,
+backup, dokumentasi.
+
+Deployment hanya boleh dilakukan setelah persetujuan eksplisit.
+
+25. STANDAR PENGERJAAN GEMINI
+
+Sebelum mengubah kode:
+
+1.  Baca struktur proyek.
+2.  Pahami alur.
+3.  Identifikasi file terkait.
+4.  Identifikasi dependensi.
+5.  Buat rencana.
+6.  Backup sebelum perubahan besar.
+
+Setelah setiap fase:
+
+-   Daftar file dibuat.
+-   Daftar file diubah.
+-   Penjelasan perubahan.
+-   Hasil build.
+-   Hasil test.
+-   Error.
+-   Risiko tersisa.
+-   Status backup.
+-   Status biaya dan layanan.
+
+Jangan menghapus fitur yang sudah stabil.
+
+Jangan membuat komponen duplikat.
+
+Jangan mengabaikan error TypeScript.
+
+Jangan menyembunyikan error.
+
+Jangan mengklaim pengujian berhasil tanpa menjalankannya.
+
+Jangan mengubah Security Rules menjadi terbuka untuk mengatasi error.
+
+Jangan mengaktifkan Billing tanpa izin.
+
+26. PERLINDUNGAN PROYEK LAMA
+
+Jika terdapat proyek SIMTAQ lama:
+
+-   Jangan mengubah proyek lama.
+-   Jangan menghapus database lama.
+-   Jangan mengubah Authentication lama.
+-   Jangan mengubah Storage lama.
+-   Jangan mengubah IAM.
+-   Jangan mengubah Billing.
+-   Jangan melakukan migrasi otomatis.
+-   Audit proyek lama hanya secara read-only jika diperlukan.
+
+Proyek baru harus memiliki konfigurasi sendiri.
+
+27. KRITERIA KEBERHASILAN
+
+SIMTAQ hanya dinyatakan siap apabila:
+
+1.  Hanya digunakan untuk SDN Jetiskarangpung 1.
+
+2.  Tidak mempunyai ketergantungan wajib pada layanan berbayar.
+
+3.  Autentikasi dan otorisasi aman.
+
+4.  Manajemen tahfidz berfungsi.
+
+5.  Smart Murotal berfungsi.
+
+6.  Smart Hifdzil berfungsi.
+
+7.  Talking Duet dasar berfungsi.
+
+8.  Belajar Tajwid Interaktif berfungsi.
+
+9.  Visual ayat tajwid benar.
+
+10. Audio contoh tajwid sesuai.
+
+11. Kuis tajwid pilihan ganda berfungsi.
+
+12. Kuis MAPSi berfungsi.
+
+13. Sumber teks dan audio tervalidasi.
+
+14. Offline learning berfungsi.
+
+15. Hasil latihan tersimpan lokal.
+
+16. Sinkronisasi incremental berfungsi.
+
+17. Dashboard menampilkan data benar.
+
+18. Identitas pembuat tampil.
+
+19. Menu donasi menampilkan informasi rekening dengan benar.
+
+20. Tombol salin nomor rekening berfungsi.
+
+21. Tidak ada klaim pembayaran otomatis yang palsu.
+
+22. Tidak ada fitur QR Bima atau QR pembayaran.
+
+23. Tidak ada pilihan nominal donasi.
+
+24. Pesan informasi sekolah tampil elegan di dashboard dan portal siswa.
+
+25. Pengumuman tampil sesuai hak akses dan target penerima.
+
+26. Aplikasi nyaman pada ponsel Android.
+
+27. Tidak ada error kritis.
+
+28. Dokumentasi tersedia.
+
+29. INSTRUKSI EKSEKUSI PERTAMA
+
+JANGAN LANGSUNG CODING.
+
+Mulai dengan PHASE 0 – FEASIBILITY DAN AUDIT ARSITEKTUR.
+
+Sampaikan laporan:
+
+A. Arsitektur final. B. Diagram komponen. C. Diagram aliran data. D.
+Matriks fitur gratis. E. Batasan paket gratis. F. Strategi akun
+berjenjang. G. Strategi Smart Murotal. H. Strategi Smart Hifdzil. I.
+Strategi Talking Duet. J. Strategi audio offline. K. Strategi Belajar
+Tajwid. L. Strategi kuis tajwid audio dan visual. M. Strategi MAPSi
+Hifdzil. N. Sumber Al-Qur’an dan validasi. O. Lisensi audio. P. Struktur
+database. Q. Keamanan dan privasi anak. R. Strategi penghematan kuota.
+S. Implementasi identitas pembuat. T. Implementasi menu donasi transfer
+manual tanpa QR dan tanpa nominal pilihan. U. Desain pesan informasi dan
+pengumuman sekolah. V. Risiko teknis. W. Rencana pengujian. X. Estimasi
+kebutuhan penyimpanan dan bandwidth.
+
+Tandai semua hal yang belum terverifikasi.
+
+Jangan melakukan coding, deployment, mengaktifkan Billing, menghapus
+data, atau mengubah konfigurasi proyek sebelum hasil PHASE 0 disampaikan
+dan mendapat persetujuan saya.
+
+PRINSIP UTAMA: SIMTAQ harus aman, gratis sebagai prioritas, akurat dalam
+materi Al-Qur’an, benar dalam pembelajaran tajwid, nyaman bagi anak,
+mudah digunakan guru, offline-first, hemat kuota, memiliki identitas
+sekolah yang kuat, dan dapat dikembangkan secara bertahap.
+
+------------------------------------------------------------------------
+
+ADDENDUM WAJIB – DASHBOARD VISUAL CAPAIAN HAFALAN, LAPORAN WHATSAPP, DAN KEAMANAN SUPER ADMIN
+
+Ketentuan addendum ini wajib diintegrasikan dengan arsitektur, database,
+hak akses, keamanan, dan tahapan pengembangan SIMTAQ. Jangan menghapus
+atau melemahkan ketentuan sebelumnya.
+
+29. LAPORAN VISUAL CAPAIAN HAFALAN PADA PORTAL SISWA
+
+Pada dashboard Portal Siswa, tambahkan bagian LAPORAN CAPAIAN HAFALAN
+SAYA agar siswa dapat memahami perkembangan hafalannya secara visual,
+sederhana, positif, dan memotivasi.
+
+Tampilkan: - Total surah yang telah disetorkan dan dinyatakan lulus oleh
+guru. - Total ayat unik yang telah disetorkan dan dinyatakan lulus. -
+Surah yang sedang dipelajari. - Ayat/rentang ayat terakhir yang
+disetorkan. - Target hafalan periode berjalan dan realisasinya. -
+Persentase capaian target. - Riwayat setoran berdasarkan tanggal. -
+Riwayat murajaah secara terpisah dari hafalan baru. - Status penilaian:
+menunggu penilaian, perlu perbaikan, atau lulus. - Catatan dan arahan
+guru yang boleh dilihat siswa.
+
+Gunakan progress bar, grafik perkembangan ayat, kartu capaian surah, dan
+timeline setoran. Filter periode hanya jika datanya tersedia. Gunakan
+bahasa dan visual ramah anak SD, identitas warna hijau daun, emas, dan
+putih. Jangan membuat peringkat publik yang mempermalukan siswa.
+
+Aturan akurasi: - Hanya setoran yang telah dinilai dan disahkan guru
+dihitung sebagai capaian resmi. - Aktivitas mendengarkan, latihan, kuis,
+dan murajaah tidak otomatis dihitung sebagai hafalan baru yang lulus. -
+Setoran menunggu penilaian dan perlu perbaikan tidak dihitung sebagai
+capaian lulus. - Hindari penghitungan ganda ayat yang sama. Simpan
+riwayat setiap setoran, tetapi hitung ayat secara unik berdasarkan
+status kelulusan yang sah. - Koreksi data harus memiliki jejak audit.
+
+30. LAPORAN VISUAL CAPAIAN HAFALAN PADA DASHBOARD PORTAL GURU
+
+Pada dashboard Guru/Muhafidz tambahkan bagian MONITORING CAPAIAN HAFALAN
+SISWA. Guru hanya boleh melihat siswa yang berada dalam kelas, halaqah,
+atau penugasannya.
+
+Ringkasan kelas/halaqah: - Jumlah siswa yang menjadi tanggung jawab
+guru. - Jumlah siswa yang sudah dan belum setoran pada periode
+terpilih. - Total ayat yang lulus disetorkan. - Total surah yang
+diselesaikan. - Persentase siswa yang mencapai target. - Jumlah setoran
+menunggu penilaian. - Jumlah setoran yang perlu perbaikan.
+
+Visualisasi: - Grafik perkembangan mingguan/bulanan. - Grafik target
+dibandingkan realisasi. - Grafik jumlah ayat yang lulus. - Grafik
+perkembangan per siswa. - Timeline riwayat setoran. - Ringkasan capaian
+per surah. - Daftar siswa yang memerlukan pendampingan berdasarkan data
+penilaian.
+
+Filter minimal: kelas, halaqah, siswa, rentang tanggal, surah, dan
+status setoran. Sediakan ringkasan kelas serta detail tiap siswa,
+termasuk tanggal, ayat, kelancaran, ketepatan bacaan, tajwid, makhraj,
+dan catatan guru.
+
+Jangan mengarang angka atau grafik saat data belum tersedia. Tampilkan
+tanggal periode, keadaan kosong yang informatif, dan pastikan agregat
+sesuai dengan data sumber. Optimalkan query/caching untuk menghemat
+kuota Firestore.
+
+31. INPUT NOMOR WHATSAPP WALI DAN GENERATOR LAPORAN SETORAN
+
+Pada dashboard Portal Guru, tambahkan fitur KIRIM LAPORAN SETORAN VIA
+WHATSAPP.
+
+31.1 Data kontak wali
+
+Sediakan field nama orang tua/wali, hubungan dengan siswa, nomor
+WhatsApp, status verifikasi jika tersedia, persetujuan penggunaan untuk
+komunikasi pembelajaran, dan waktu pembaruan kontak.
+
+-   Guru hanya mengelola kontak wali siswa dalam penugasannya sesuai
+    kebijakan Admin.
+-   Admin Sekolah dapat mengelola kontak sesuai hak akses.
+-   Validasi dan normalisasi nomor Indonesia, misalnya 08xxxxxxxxxx
+    menjadi +628xxxxxxxxxx, tanpa mengubah digit secara keliru.
+-   Tampilkan nama wali dan nomor tujuan sebelum membuka WhatsApp.
+-   Sediakan koreksi nomor dan lindungi nomor sebagai data pribadi.
+-   Jangan tampilkan nomor kepada pengguna yang tidak berwenang atau
+    menggunakannya untuk promosi.
+
+31.2 Laporan otomatis
+
+Setelah guru menyimpan dan mengesahkan hasil setoran, sediakan tombol
+BUAT LAPORAN WHATSAPP. Buat teks otomatis dari data setoran aktual,
+tanpa guru mengetik manual.
+
+Laporan memuat jika datanya tersedia: 1. Salam pembuka. 2. Nama sekolah.
+3. Nama siswa. 4. Kelas/halaqah. 5. Tanggal setoran. 6. Nama surah dan
+ayat awal–akhir. 7. Jenis kegiatan: hafalan baru atau murajaah. 8.
+Penilaian kelancaran. 9. Ketepatan bacaan. 10. Tajwid. 11. Makhraj. 12.
+Status hasil. 13. Catatan/arahan guru. 14. Apresiasi dan motivasi yang
+santun. 15. Identitas guru/muhafidz.
+
+Jangan mengarang data. Komponen yang belum dinilai harus dihilangkan
+atau ditandai jelas sebagai belum dinilai.
+
+31.3 Contoh template pesan
+
+Assalamu’alaikum warahmatullahi wabarakatuh.
+
+Yth. Bapak/Ibu Orang Tua/Wali dari [NAMA SISWA],
+
+Berikut laporan perkembangan setoran hafalan Al-Qur’an:
+
+SDN JETISKARANGPUNG 1 LAPORAN SETORAN HAFALAN
+
+Nama Siswa: [Nama Siswa] Kelas/Halaqah: [Kelas/Halaqah] Tanggal:
+[Tanggal Setoran]
+
+Detail Setoran Surah: [Nama Surah] Ayat: [Ayat Awal–Ayat Akhir] Jenis:
+[Hafalan Baru/Murajaah]
+
+Hasil Penilaian Kelancaran: [Hasil] Ketepatan Bacaan: [Hasil] Tajwid:
+[Hasil] Makhraj: [Hasil] Status: [Status Aktual]
+
+Catatan Guru: [Catatan aktual jika tersedia]
+
+Terima kasih atas pendampingan Bapak/Ibu di rumah. Semoga ananda semakin
+semangat belajar, menjaga hafalan, dan mencintai Al-Qur’an.
+
+Wassalamu’alaikum warahmatullahi wabarakatuh.
+
+[Nama Guru/Muhafidz] SDN Jetiskarangpung 1
+
+Redaksi boleh dirapikan, tetapi fakta, hasil penilaian, dan maksud
+catatan guru tidak boleh diubah.
+
+31.4 Mekanisme WhatsApp dan batasan teknis
+
+Alur: 1. Guru menyelesaikan dan menyimpan penilaian. 2. Aplikasi
+membentuk pesan dari data setoran tersimpan. 3. Guru melihat pratinjau
+pesan, nama, dan nomor penerima. 4. Guru menekan Kirim via WhatsApp. 5.
+Aplikasi membuka WhatsApp/WhatsApp Web dengan penerima dan teks terisi
+melalui mekanisme click-to-chat resmi seperti tautan wa.me, jika
+didukung perangkat. 6. Guru memeriksa lalu menekan tombol kirim di
+WhatsApp.
+
+PENTING: - Jangan mengklaim pesan terkirim otomatis jika aplikasi hanya
+membuka WhatsApp dengan teks terisi. - Tanpa WhatsApp Business
+Platform/API resmi, PWA/browser tidak boleh mengirim pesan diam-diam
+atau otomatis di latar belakang. - Jangan gunakan bot, scraping, atau
+otomasi WhatsApp tidak resmi. - Pengiriman harus tetap di bawah kendali
+guru. - Status “WhatsApp dibuka” tidak sama dengan “pesan terkirim”.
+Sediakan status yang jujur, misalnya belum dibagikan, WhatsApp dibuka,
+atau dikonfirmasi guru telah dikirim. - Sediakan tombol salin laporan
+jika WhatsApp tidak tersedia. - Integrasi WhatsApp Business API di masa
+depan harus menjadi opsi terpisah dengan persetujuan, biaya, kebijakan,
+dan konfigurasi resmi.
+
+32. KEAMANAN AKUN SUPER ADMIN GOOGLE
+
+Akun Google dwiariwibowo313@gmail.com harus dapat masuk sebagai Super
+Admin utama SIMTAQ dengan proses autentikasi dan otorisasi yang aman.
+Alamat email yang diketik pada form login saja tidak cukup untuk
+memberikan role Super Admin.
+
+32.1 Penetapan role
+
+-   Gunakan Firebase Authentication Google Sign-In.
+-   Setelah login, verifikasi UID Firebase Auth, email, dan status email
+    terverifikasi (email_verified).
+-   Tetapkan email yang diizinkan melalui konfigurasi tepercaya di
+    server/backend.
+-   Role Super Admin hanya boleh ditetapkan backend tepercaya
+    menggunakan Firebase Admin SDK atau mekanisme bootstrap aman.
+-   Jika memakai custom claims, hanya backend tepercaya yang boleh
+    menetapkannya.
+-   Jangan menetapkan role dari frontend, localStorage, IndexedDB,
+    parameter URL, atau input pengguna.
+-   Jangan menaruh private key, service account key, atau secret pada
+    frontend/repository publik.
+-   Jangan otomatis memberi role hanya karena pengguna mengetik email
+    tersebut.
+
+32.2 Bootstrap satu kali
+
+1.  Periksa apakah catatan bootstrap Super Admin sudah ada.
+2.  Jika belum, pengguna melakukan Google Sign-In dengan akun yang
+    benar.
+3.  Backend memverifikasi bahwa akun terautentikasi adalah
+    dwiariwibowo313@gmail.com dan email telah terverifikasi.
+4.  Backend mengikat role Super Admin pada UID Firebase Auth yang sah.
+5.  Simpan catatan bootstrap dan audit log.
+6.  Pastikan penetapan role dan pencatatan bootstrap atomik/idempotent
+    serta terlindungi dari dua proses bersamaan.
+7.  Jika bootstrap sudah selesai, tolak bootstrap ulang secara default.
+8.  Sediakan prosedur pemulihan aman dan dapat diaudit jika terjadi
+    kegagalan sebagian.
+
+Jangan mengasumsikan akun tersebut sudah terdaftar di Firebase Auth.
+Jika belum, lakukan Google Sign-In terlebih dahulu, kemudian bootstrap
+tervalidasi. Jangan membuka akses Super Admin sebagai jalan pintas.
+
+32.3 Otorisasi
+
+-   Terapkan default-deny pada Firestore Security Rules.
+-   Validasi role pada backend dan Security Rules, bukan hanya tampilan
+    frontend.
+-   Hanya Super Admin sah yang dapat mengakses konfigurasi sistem,
+    manajemen Admin Sekolah, keamanan, dan audit log.
+-   Catat login, perubahan role, perubahan konfigurasi penting,
+    percobaan akses ditolak, serta aktivitas bootstrap.
+-   Jangan mencatat password, token rahasia, atau data autentikasi
+    sensitif.
+-   Sediakan prosedur pemulihan akun utama yang aman.
+-   Jangan membuat akun cadangan Super Admin tanpa persetujuan
+    eksplisit.
+-   Jangan tampilkan status login Super Admin sebelum role diverifikasi
+    dari sumber tepercaya.
+
+32.4 Pengujian wajib
+
+Uji akun utama terverifikasi, akun Google lain, email belum
+terverifikasi jika dapat diuji, upaya mengubah role dari frontend,
+pemanggilan fungsi Super Admin secara langsung, bootstrap berulang, dua
+bootstrap bersamaan, logout/login ulang, session kedaluwarsa, dan
+penolakan Security Rules bagi pengguna tanpa hak. Nyatakan berhasil
+hanya jika pengujian benar-benar dijalankan dan dicatat.
+
+33. PEMBARUAN DATA DAN HAK AKSES
+
+Audit skema yang sudah ada sebelum menambah field/koleksi. Hindari
+duplikasi. Pastikan dapat merepresentasikan: - Kontak WhatsApp wali dan
+persetujuan komunikasi. - Riwayat perubahan nomor wali. - Setoran,
+status penilaian, dan ringkasan capaian. - Riwayat pembuatan laporan
+WhatsApp dan status tindakan berbagi. - UID Super Admin terverifikasi,
+catatan bootstrap, dan audit keamanan.
+
+Data sumber setoran tetap menjadi sumber kebenaran. Ringkasan dashboard
+harus dapat ditelusuri ke data sumber. Laporan WhatsApp harus berasal
+dari setoran tersimpan. Guru hanya mengakses siswa dalam penugasannya;
+siswa hanya data miliknya; wali hanya anak yang terhubung dan
+terotorisasi; semua akses mengikuti RBAC.
+
+34. PEMBARUAN TAHAPAN PENGEMBANGAN DAN QA
+
+Integrasikan fitur ke fase terkait: - Master data: kontak WhatsApp wali,
+validasi, dan privasi. - Manajemen tahfidz: konsistensi status setoran
+dan penilaian. - Dashboard: grafik capaian siswa dan guru. - Laporan:
+generator pesan WhatsApp dari setoran aktual. - Authentication/Security:
+bootstrap Super Admin Google yang aman. - QA: akurasi agregasi,
+pembatasan akses, privasi nomor, isi pesan, dan click-to-chat.
+
+Pengujian tambahan wajib: 1. Ayat tidak dihitung ganda. 2. Setoran belum
+dinilai tidak masuk capaian lulus. 3. Murajaah tidak salah dihitung
+sebagai hafalan baru. 4. Grafik sesuai data sumber. 5. Guru tidak
+melihat siswa di luar penugasannya. 6. Siswa tidak melihat capaian siswa
+lain. 7. Nomor WhatsApp dinormalisasi benar. 8. Laporan sesuai setoran
+yang baru dinilai. 9. Laporan tidak mengarang penilaian kosong. 10.
+WhatsApp dibuka dengan penerima dan teks benar jika perangkat mendukung.
+11. Aplikasi tidak mengklaim pesan terkirim tanpa konfirmasi yang sah.
+12. Salin laporan berfungsi. 13. Hanya akun Google Super Admin
+terverifikasi yang mendapat akses. 14. Bootstrap tidak dapat diulang
+atau diambil alih pihak lain. 15. Perubahan role dan data sensitif
+tercatat dalam audit log.
+
+Jangan deployment atau mengubah produksi sebelum perubahan ditinjau,
+diuji, dan mendapat persetujuan eksplisit.

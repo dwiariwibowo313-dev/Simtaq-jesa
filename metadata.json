@@ -1,0 +1,6 @@
+{
+  "name": "SIMTAQ — SDN Jetiskarangpung 1",
+  "description": "Sistem Informasi Manajemen Tahfidz Al-Qur'an Single School Edition untuk SDN Jetiskarangpung 1, Kalijambe, Sragen. Free-first, offline-first PWA dengan Smart Murotal, Smart Hifdzil, Talking Duet, Belajar Tajwid Interaktif, MAPSi Hifdzil Challenge, dan Laporan WhatsApp Wali.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": []
+}
